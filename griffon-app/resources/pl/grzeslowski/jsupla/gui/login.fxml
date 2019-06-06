@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!--suppress JavaFxUnresolvedFxIdReference -->
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox xmlns="http://javafx.com/javafx"
+	  xmlns:fx="http://javafx.com/fxml"
+	  fx:controller="pl.grzeslowski.jsupla.gui.LoginController"
+	  prefHeight="400.0" prefWidth="600.0">
+	<Label text="Supla GUI"/>
+	<HBox>
+		<Label text="%login.token"/>
+		<TextField fx:id="tokenTextField"/>
+	</HBox>
+	<Button fx:id="clickActionTarget"
+			mnemonicParsing="false"
+			prefWidth="200.0"
+			text="Click"/>
+</VBox>
