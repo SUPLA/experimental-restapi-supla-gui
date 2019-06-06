@@ -10,6 +10,6 @@ import javax.inject.Named;
 @ServiceProviderFor(value = [Module::class])
 class PreferencesModule : AbstractModule() {
     override fun doConfigure() {
-        bind(PreferencesService::class.java).to(SimplePreferences::class.java)
+        bind(PreferencesService::class.java).to(SimplePreferences::class.java).asSingleton()
     }
 }

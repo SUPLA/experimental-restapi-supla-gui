@@ -9,6 +9,6 @@ import javax.inject.Named
 @ServiceProviderFor(value = [Module::class])
 class InputOutputModule : AbstractModule() {
     override fun doConfigure() {
-        bind(InputOutputService::class.java).to(MacOsInputOutputService::class.java)
+        bind(InputOutputService::class.java).to(MacOsInputOutputService::class.java).asSingleton()
     }
 }
