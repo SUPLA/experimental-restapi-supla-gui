@@ -5,28 +5,29 @@ import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
 import javafx.collections.SetChangeListener
 import javafx.fxml.FXML
-import javafx.scene.Group
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
-import javafx.scene.paint.Color
-import javafx.stage.Stage
-import javafx.stage.Window
-import org.codehaus.griffon.runtime.javafx.artifact.AbstractJavaFXGriffonView
+import org.controlsfx.control.ToggleSwitch
 import pl.grzeslowski.jsupla.api.generated.model.Device
+import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
+import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 import java.util.stream.Collectors
 import javax.annotation.Nonnull
+import javax.inject.Inject
 
 
 @ArtifactProviderFor(GriffonView::class)
-class JSuplaGuiView : AbstractJavaFXGriffonView() {
+class JSuplaGuiView @Inject constructor(preferencesService: PreferencesService) : AbstractView(preferencesService) {
     @set:[MVCMember Nonnull]
     lateinit var model: JSuplaGuiModel
     @set:[MVCMember Nonnull]
     lateinit var controller: JSuplaGuiController
 
+    // server info
     lateinit private @FXML
     var addressValueLabel: Label
     lateinit private @FXML
@@ -36,28 +37,26 @@ class JSuplaGuiView : AbstractJavaFXGriffonView() {
     lateinit private @FXML
     var supportedApiVersionsValueLabel: Label
 
+    // devices
     lateinit private @FXML
     var deviceList: VBox
 
-    override fun initUI() {
-        val stage: Stage = application.createApplicationContainer(mapOf()) as Stage
-        stage.title = application.configuration.getAsString("application.title")
-        stage.scene = _init()
-        application.getWindowManager<Window>().attach("mainWindow", stage)
-    }
+    // misc
+    lateinit private @FXML
+    var themeToggle: ToggleSwitch
 
-    private fun _init(): Scene {
-        val scene: Scene = Scene(Group())
-        scene.fill = Color.WHITE
 
-        val node = loadFromFXML()
+    override fun internalInit(): Scene {
+        val node: Parent = loadParentFxml()
         initServerInfoLabels()
         initDeviceList()
-        (scene.root as Group).children.addAll(node)
+        initThemeToggle()
         connectActions(node, controller)
         connectMessageSource(node)
-        return scene
+        return Scene(node)
     }
+
+    override fun windowName() = "mainWindow"
 
     private fun initServerInfoLabels() {
         model.address.bindBidirectional(addressValueLabel.textProperty())
@@ -82,5 +81,10 @@ class JSuplaGuiView : AbstractJavaFXGriffonView() {
         val node = HBox()
         node.children.add(Label(device.name))
         return node
+    }
+
+    private fun initThemeToggle() {
+        themeToggle.isSelected = preferencesService.readBoolWithDefault(PreferencesKeys.theme, false)
+        model.darkTheme.bindBidirectional(themeToggle.selectedProperty())
     }
 }

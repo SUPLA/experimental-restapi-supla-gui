@@ -15,11 +15,15 @@ class SimplePreferences @Inject constructor(private val inputOutputService: Inpu
     private val preferencesFileName = "preferences.properties"
     private val properties = Properties()
 
-    override fun write(key: String, value: String) {
-        properties.setProperty(key, value)
+    override fun write(key: String, value: Any) {
+        properties.setProperty(key, value.toString())
     }
 
     override fun read(key: String): String? = properties.getProperty(key)
+
+    override fun readBool(key: String) = properties.getProperty(key)?.toBoolean()
+
+    override fun readBoolWithDefault(key: String, default: Boolean) = readBool(key) ?: default
 
     @PostConstruct
     fun init() {

@@ -35,6 +35,7 @@ class JSuplaGuiController @Inject constructor(
         } else {
             initServerInfo()
             initDevices()
+            initThemeToggle()
         }
     }
 
@@ -51,5 +52,12 @@ class JSuplaGuiController @Inject constructor(
         log.trace("initDevices")
         val devices = deviceApiProvider.get().findAllDevice()
         model.devices.addAll(devices)
+    }
+
+    private fun initThemeToggle() {
+        model.darkTheme.addListener { _, _, darkTheme ->
+            preferencesService.write(PreferencesKeys.theme, darkTheme)
+            application.eventRouter.publishEvent("ThemeChanged")
+        }
     }
 }

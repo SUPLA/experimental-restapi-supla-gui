@@ -4,7 +4,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox prefHeight="200.0" prefWidth="400.0"
+<?import org.controlsfx.control.ToggleSwitch?>
+<VBox minHeight="200.0" minWidth="400.0"
 	  xmlns:fx="http://javafx.com/fxml"
 	  fx:controller="pl.grzeslowski.jsupla.gui.JSuplaGuiController">
 	<VBox fx:id="deviceList">
@@ -26,4 +27,5 @@
 		<Label fx:id="supportedApiVersionsLabel" text="%jSuplaGui.supportedApiVersions"/>
 		<Label fx:id="supportedApiVersionsValueLabel" text="N/A"/>
 	</HBox>
+	<ToggleSwitch fx:id="themeToggle" text="%jSuplaGui.darkTheme"/>
 </VBox>
