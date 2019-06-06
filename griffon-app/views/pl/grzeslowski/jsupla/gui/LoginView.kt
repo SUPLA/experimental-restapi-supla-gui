@@ -27,7 +27,7 @@ class LoginView : AbstractJavaFXGriffonView() {
         val stage: Stage = application.createApplicationContainer(mapOf()) as Stage
         stage.title = application.configuration.getAsString("login.title")
         stage.scene = internalInit()
-        application.getWindowManager<Window>().attach("mainWindow", stage)
+        application.getWindowManager<Window>().attach("loginWindow", stage)
     }
 
     private fun internalInit(): Scene {
