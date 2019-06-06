@@ -5,23 +5,23 @@ import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
 import javafx.collections.SetChangeListener
 import javafx.fxml.FXML
-import javafx.scene.Node
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Label
-import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import org.controlsfx.control.ToggleSwitch
-import pl.grzeslowski.jsupla.api.generated.model.Device
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
+import pl.grzeslowski.jsupla.gui.view.ViewBuilder
 import java.util.stream.Collectors
 import javax.annotation.Nonnull
 import javax.inject.Inject
 
 
 @ArtifactProviderFor(GriffonView::class)
-class JSuplaGuiView @Inject constructor(preferencesService: PreferencesService) : AbstractView(preferencesService) {
+class JSuplaGuiView @Inject constructor(
+        preferencesService: PreferencesService,
+        private val viewBuilder: ViewBuilder) : AbstractView(preferencesService) {
     @set:[MVCMember Nonnull]
     lateinit var model: JSuplaGuiModel
     @set:[MVCMember Nonnull]
@@ -71,16 +71,10 @@ class JSuplaGuiView @Inject constructor(preferencesService: PreferencesService) 
             deviceList.children.clear()
             val nodes = change.set
                     .stream()
-                    .map { device -> buildDeviceNode(device) }
+                    .map { device -> viewBuilder.buildViewForDevice(device) }
                     .collect(Collectors.toList())
             deviceList.children.addAll(nodes)
         })
-    }
-
-    private fun buildDeviceNode(device: Device): Node {
-        val node = HBox()
-        node.children.add(Label(device.name))
-        return node
     }
 
     private fun initThemeToggle() {
