@@ -19,5 +19,5 @@
 	<Button fx:id="clickActionTarget"
 			mnemonicParsing="false"
 			prefWidth="200.0"
-			text="Click"/>
+			text="%login.button"/>
 </VBox>

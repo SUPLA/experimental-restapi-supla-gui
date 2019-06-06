@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<!--suppress JavaFxUnresolvedFxIdReference -->
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.GridPane?>
-<GridPane prefHeight="60.0" prefWidth="200.0"
-		  xmlns:fx="http://javafx.com/fxml"
-		  fx:controller="pl.grzeslowski.jsupla.gui.JSuplaGuiController">
-	<Label fx:id="clickLabel"
-		   text="0"
-		   GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-	<Button fx:id="clickActionTarget"
-			GridPane.columnIndex="0" GridPane.rowIndex="1"
-			mnemonicParsing="false"
-			prefWidth="200.0"
-			text="Click"/>
-</GridPane>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox prefHeight="200.0" prefWidth="400.0"
+	  xmlns:fx="http://javafx.com/fxml"
+	  fx:controller="pl.grzeslowski.jsupla.gui.JSuplaGuiController">
+	<VBox fx:id="deviceList">
+
+	</VBox>
+	<HBox>
+		<Label fx:id="addressLabel" text="%jSuplaGui.address"/>
+		<Label fx:id="addressValueLabel" text="N/A"/>
+	</HBox>
+	<HBox>
+		<Label fx:id="cloudVersionLabel" text="%jSuplaGui.cloudVersion"/>
+		<Label fx:id="cloudVersionValueLabel" text="N/A"/>
+	</HBox>
+	<HBox>
+		<Label fx:id="apiVersionLabel" text="%jSuplaGui.apiVersion"/>
+		<Label fx:id="apiVersionValueLabel" text="N/A"/>
+	</HBox>
+	<HBox>
+		<Label fx:id="supportedApiVersionsLabel" text="%jSuplaGui.supportedApiVersions"/>
+		<Label fx:id="supportedApiVersionsValueLabel" text="N/A"/>
+	</HBox>
+</VBox>

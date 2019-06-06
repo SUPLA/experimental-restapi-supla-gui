@@ -8,5 +8,5 @@ import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonModel
 
 @ArtifactProviderFor(GriffonModel::class)
 class LoginModel : AbstractGriffonModel() {
-    var token: StringProperty = SimpleStringProperty(this, "token", "")
+    var token: StringProperty = SimpleStringProperty(this, "tokenTextField", "")
 }
