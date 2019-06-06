@@ -75,6 +75,7 @@ dependencies {
     compile "org.codehaus.griffon:griffon-javafx:${griffonVersion}"
     compile "org.codehaus.griffon:griffon-guice:${griffonVersion}"
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
+    compile 'org.jfxtras:jmetro:5.5'
 
     runtime "org.slf4j:slf4j-simple:${slf4jVersion}"
 
