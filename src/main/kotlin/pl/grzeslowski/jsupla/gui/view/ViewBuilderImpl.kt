@@ -21,7 +21,7 @@ internal class ViewBuilderImpl : ViewBuilder {
 
         val channels = device.channels.stream().map { buildViewForChannel(it) }.collect(Collectors.toList())
 
-        val node = VBox()
+        val node = VBox(20.0)
         node.children.addAll(deviceName)
         if (deviceComment != null) {
             node.children.add(deviceComment)

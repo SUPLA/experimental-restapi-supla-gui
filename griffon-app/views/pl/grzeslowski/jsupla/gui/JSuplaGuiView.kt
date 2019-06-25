@@ -8,7 +8,7 @@ import javafx.fxml.FXML
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Label
-import javafx.scene.layout.VBox
+import javafx.scene.layout.FlowPane
 import org.controlsfx.control.ToggleSwitch
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
@@ -39,7 +39,7 @@ class JSuplaGuiView @Inject constructor(
 
     // devices
     @FXML
-    private lateinit var deviceList: VBox
+    private lateinit var deviceList: FlowPane
 
     // misc
     @FXML

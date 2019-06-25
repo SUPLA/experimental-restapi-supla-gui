@@ -2,15 +2,16 @@
 
 <!--suppress JavaFxUnresolvedFxIdReference -->
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.ToggleSwitch?>
 <VBox minHeight="200.0" minWidth="400.0"
 	  xmlns:fx="http://javafx.com/fxml"
 	  fx:controller="pl.grzeslowski.jsupla.gui.JSuplaGuiController">
-	<VBox fx:id="deviceList">
+	<FlowPane fx:id="deviceList">
 
-	</VBox>
+	</FlowPane>
 	<HBox>
 		<Label fx:id="addressLabel" text="%jSuplaGui.address"/>
 		<Label fx:id="addressValueLabel" text="N/A"/>
