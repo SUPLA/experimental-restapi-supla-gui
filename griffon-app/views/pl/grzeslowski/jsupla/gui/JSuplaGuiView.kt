@@ -28,22 +28,22 @@ class JSuplaGuiView @Inject constructor(
     lateinit var controller: JSuplaGuiController
 
     // server info
-    lateinit private @FXML
-    var addressValueLabel: Label
-    lateinit private @FXML
-    var cloudVersionValueLabel: Label
-    lateinit private @FXML
-    var apiVersionValueLabel: Label
-    lateinit private @FXML
-    var supportedApiVersionsValueLabel: Label
+    @FXML
+    private lateinit var addressValueLabel: Label
+    @FXML
+    private lateinit var cloudVersionValueLabel: Label
+    @FXML
+    private lateinit var apiVersionValueLabel: Label
+    @FXML
+    private lateinit var supportedApiVersionsValueLabel: Label
 
     // devices
-    lateinit private @FXML
-    var deviceList: VBox
+    @FXML
+    private lateinit var deviceList: VBox
 
     // misc
-    lateinit private @FXML
-    var themeToggle: ToggleSwitch
+    @FXML
+    private lateinit var themeToggle: ToggleSwitch
 
 
     override fun internalInit(): Scene {

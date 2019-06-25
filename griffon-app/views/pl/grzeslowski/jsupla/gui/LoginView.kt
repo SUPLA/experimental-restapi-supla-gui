@@ -18,8 +18,8 @@ class LoginView @Inject constructor(preferencesService: PreferencesService) : Ab
     @set:[MVCMember Nonnull]
     lateinit var controller: LoginController
 
-    lateinit private @FXML
-    var tokenTextField: TextField
+    @FXML
+    private lateinit var tokenTextField: TextField
 
     override fun windowName() = "loginWindow"
 
