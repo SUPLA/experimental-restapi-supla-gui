@@ -1,14 +1,14 @@
 package pl.grzeslowski.jsupla.gui.api
 
-import pl.grzeslowski.jsupla.api.generated.ApiClient
-import pl.grzeslowski.jsupla.api.generated.api.ChannelsApi
-import pl.grzeslowski.jsupla.api.generated.model.ChannelExecuteActionRequest
+import pl.grzeslowski.jsupla.api.Api
+import pl.grzeslowski.jsupla.api.channel.Channel
+import pl.grzeslowski.jsupla.api.channel.action.Action
 import javax.inject.Inject
 
-internal class SuplaChannelApi @Inject constructor(apiClient: ApiClient) : ChannelApi {
-    private val api: ChannelsApi = ChannelsApi(apiClient)
+internal class SuplaChannelApi @Inject constructor(api: Api) : ChannelApi {
+    private val channelApi = api.channelApi
 
-    override fun executeAction(id: Int, action: ChannelExecuteActionRequest) {
-        api.executeAction(action, id)
+    override fun executeAction(channel: Channel, action: Action) {
+        channelApi.updateState(channel, action)
     }
 }

@@ -1,15 +1,14 @@
 package pl.grzeslowski.jsupla.gui.api
 
-import pl.grzeslowski.jsupla.api.generated.ApiClient
-import pl.grzeslowski.jsupla.api.generated.api.IoDevicesApi
-import pl.grzeslowski.jsupla.api.generated.model.Device
+import pl.grzeslowski.jsupla.api.Api
+import pl.grzeslowski.jsupla.api.device.Device
+import java.util.*
 import javax.inject.Inject
 
-internal class SuplaDeviceApi @Inject constructor(apiClient: ApiClient) : DeviceApi {
-    private val defaultInclude = listOf("channels", "location", "originalLocation", "connected", "schedules", "accessids")
-    private val api: IoDevicesApi = IoDevicesApi(apiClient)
+internal class SuplaDeviceApi @Inject constructor(api: Api) : DeviceApi {
+    private val deviceApi=api.deviceApi
 
-    override fun findAllDevice(): List<Device> = api.getIoDevices(defaultInclude)
+    override fun findAllDevice(): SortedSet<Device> = deviceApi.findDevices()
 
-    override fun findDevice(id: Int): Device = api.getIoDevice(id, defaultInclude)
+    override fun findDevice(id: Int): Device = deviceApi.findDevice(id)
 }

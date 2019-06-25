@@ -45,7 +45,7 @@ class JSuplaGuiController @Inject constructor(
         model.address.value = serverInfo.address
         model.cloudVersion.value = serverInfo.cloudVersion
         model.apiVersion.value = serverInfo.apiVersion
-        model.supportedApiVersions.value = serverInfo.supportedApiVersions.joinToString(", ", "[", "]")
+        model.supportedApiVersions.value = serverInfo.supportedVersions.joinToString(", ", "[", "]")
     }
 
     private fun initDevices() {

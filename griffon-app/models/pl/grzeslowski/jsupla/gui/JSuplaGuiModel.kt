@@ -6,7 +6,7 @@ import griffon.metadata.ArtifactProviderFor
 import javafx.beans.property.*
 import javafx.collections.FXCollections.observableSet
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonModel
-import pl.grzeslowski.jsupla.api.generated.model.Device
+import pl.grzeslowski.jsupla.api.device.Device
 
 @ArtifactProviderFor(GriffonModel::class)
 class JSuplaGuiModel : AbstractGriffonModel() {

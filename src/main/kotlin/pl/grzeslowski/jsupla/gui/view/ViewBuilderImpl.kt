@@ -4,10 +4,9 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import org.controlsfx.control.ToggleSwitch
-import pl.grzeslowski.jsupla.api.generated.model.Channel
-import pl.grzeslowski.jsupla.api.generated.model.ChannelFunctionEnumNames.LIGHTSWITCH
-import pl.grzeslowski.jsupla.api.generated.model.ChannelFunctionEnumNames.POWERSWITCH
-import pl.grzeslowski.jsupla.api.generated.model.Device
+import pl.grzeslowski.jsupla.api.channel.Channel
+import pl.grzeslowski.jsupla.api.channel.OnOffChannel
+import pl.grzeslowski.jsupla.api.device.Device
 import java.util.stream.Collectors
 
 internal class ViewBuilderImpl : ViewBuilder {
@@ -32,12 +31,12 @@ internal class ViewBuilderImpl : ViewBuilder {
     }
 
     private fun buildViewForChannel(channel: Channel): Node =
-            when (channel.function.name) {
-                LIGHTSWITCH, POWERSWITCH -> {
+            when (channel) {
+                is OnOffChannel -> {
                     val toggle = ToggleSwitch(channel.caption)
-                    toggle.isSelected = channel.state.on
+                    toggle.isSelected = channel.isConnected
                     toggle
                 }
-                else -> Label(" > Unknown ${channel.function.name}")
+                else -> Label(" > Unknown ${channel.javaClass.simpleName}")
             }
 }

@@ -1,11 +1,11 @@
 package pl.grzeslowski.jsupla.gui.api
 
-import pl.grzeslowski.jsupla.api.generated.ApiClient
-import pl.grzeslowski.jsupla.api.generated.model.ServerInfo
+import pl.grzeslowski.jsupla.api.Api
+import pl.grzeslowski.jsupla.api.serverinfo.ServerInfo
 import javax.inject.Inject
 
-internal class SuplaServerApi @Inject constructor(apiClient: ApiClient) : ServerApi {
-    private val api = pl.grzeslowski.jsupla.api.generated.api.ServerApi(apiClient)
+internal class SuplaServerApi @Inject constructor(api: Api) : ServerApi {
+    private val serverInfoApi = api.serverInfoApi
 
-    override fun findServerInfo(): ServerInfo = api.serverInfo
+    override fun findServerInfo(): ServerInfo = serverInfoApi.findServerInfo()
 }

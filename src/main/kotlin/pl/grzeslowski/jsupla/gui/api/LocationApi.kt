@@ -1,8 +1,10 @@
 package pl.grzeslowski.jsupla.gui.api
 
-import pl.grzeslowski.jsupla.api.generated.model.Device
-import pl.grzeslowski.jsupla.api.generated.model.Location
+import pl.grzeslowski.jsupla.api.device.Device
+import pl.grzeslowski.jsupla.api.location.Location
+import java.util.*
+
 
 interface LocationApi {
-    fun findDevicesInLocations(): Map<Location, List<Device>>
+    fun findDevicesInLocations(): SortedSet<Location>
 }
