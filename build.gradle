@@ -24,6 +24,12 @@ apply plugin: 'application'
 apply plugin: 'idea'
 apply plugin: 'net.nemerosa.versioning'
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 Date buildTimeAndDate = new Date()
 ext {
     buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
