@@ -10,7 +10,7 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
-import javafx.scene.layout.FlowPane
+import javafx.scene.layout.Pane
 import org.slf4j.LoggerFactory
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
@@ -43,7 +43,7 @@ class JSuplaGuiView @Inject constructor(
 
     // devices
     @FXML
-    private lateinit var deviceList: FlowPane
+    private lateinit var deviceList: Pane
     @FXML
     private lateinit var scroll: ScrollPane
 
