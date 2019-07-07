@@ -61,19 +61,20 @@ class JSuplaGuiController @Inject constructor(
 
     private fun initDevices() {
         log.trace("initDevices")
-        val command = Runnable {
-            try {
-                logger.debug("Updating all devices")
-                val devices = deviceApiProvider.get().findAllDevice()
-                runInsideUISync {
-                    model.devices.clear()
-                    model.devices.addAll(devices)
-                }
-            } catch (ex: Exception) {
-                logger.error("Cannot fetch devices!", ex)
+        updateDeviceFuture = threadService.scheduleEvery(this::updateDevices, 0, preferencesService.readLongWithDefault(PreferencesKeys.refreshTime, 30), TimeUnit.SECONDS)
+    }
+
+    private fun updateDevices() {
+        try {
+            logger.debug("Updating all devices")
+            val devices = deviceApiProvider.get().findAllDevice()
+            runInsideUISync {
+                model.devices.clear()
+                model.devices.addAll(devices)
             }
+        } catch (ex: Exception) {
+            logger.error("Cannot fetch devices!", ex)
         }
-        updateDeviceFuture = threadService.scheduleEvery(command, 0, preferencesService.readLongWithDefault(PreferencesKeys.refreshTime, 30), TimeUnit.SECONDS)
     }
 
     private fun initThemeToggle() {
