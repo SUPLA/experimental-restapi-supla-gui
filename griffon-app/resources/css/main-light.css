@@ -32,7 +32,7 @@
 }
 
 .tile .separator {
-	-fx-text-fill: white;
+	-fx-background-color: white;
 	-fx-opacity: 0.6;
 }
 
@@ -58,7 +58,7 @@
 	-fx-font-family: "Roboto Light";
 }
 
-/* ROLER SHUTTER DEVICE */
+/* ROLLER SHUTTER DEVICE */
 .tile.roller-shutter {
 	-fx-background-color: #008A00;
 }
@@ -84,6 +84,10 @@
 
 .tile.color-device .label {
 	-fx-text-fill: black;
+}
+
+.tile.color-device .separator {
+	-fx-background-color: black;
 }
 
 .tile.color-device .jfx-slider > .colored-track {
