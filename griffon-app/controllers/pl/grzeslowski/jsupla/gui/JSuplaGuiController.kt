@@ -28,7 +28,7 @@ class JSuplaGuiController @Inject constructor(
         application.eventRouter.addEventListener("NewToken") { init() }
     }
 
-    fun init() {
+    private fun init() {
         val token = tokenService.read()
         if (token == null || token.isBlank()) {
             log.debug("Token is not yet stored")

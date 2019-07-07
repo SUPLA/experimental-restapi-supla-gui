@@ -16,11 +16,11 @@ class MacOsInputOutputService : InputOutputService {
             logger.info("Creating directory `{}`", path)
             val createdDirectory = file.mkdirs()
             if (createdDirectory.not()) {
-                throw IllegalStateException("Cannot create direcory `${path}`!")
+                throw IllegalStateException("Cannot create direcory `$path`!")
             }
         } else {
             if (file.isDirectory.not()) {
-                throw IllegalStateException("File `${path}` is not a directory!")
+                throw IllegalStateException("File `$path` is not a directory!")
             }
         }
     }
