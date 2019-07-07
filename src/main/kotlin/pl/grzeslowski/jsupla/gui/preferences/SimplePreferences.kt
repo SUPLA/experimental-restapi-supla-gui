@@ -25,6 +25,14 @@ class SimplePreferences @Inject constructor(private val inputOutputService: Inpu
 
     override fun readBoolWithDefault(key: String, default: Boolean) = readBool(key) ?: default
 
+    override fun readInt(key: String): Int? = properties.getProperty(key)?.toInt()
+
+    override fun readIntWithDefault(key: String, default: Int): Int = readInt(key) ?: default
+
+    override fun readLong(key: String): Long? = properties.getProperty(key)?.toLong()
+
+    override fun readLongWithDefault(key: String, default: Long): Long = readLong(key) ?: default
+
     @PostConstruct
     fun init() {
         logger.debug("Loading preferences from `{}`", preferencesFileName)

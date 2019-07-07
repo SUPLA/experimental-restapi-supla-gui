@@ -5,12 +5,17 @@ import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
 import javafx.stage.Window
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonController
+import org.slf4j.LoggerFactory
 import pl.grzeslowski.jsupla.gui.api.DeviceApi
 import pl.grzeslowski.jsupla.gui.api.ServerApi
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 import pl.grzeslowski.jsupla.gui.preferences.TokenService
+import pl.grzeslowski.jsupla.gui.thread.ThreadService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 import javax.annotation.Nonnull
+import javax.annotation.PreDestroy
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -18,8 +23,12 @@ import javax.inject.Provider
 class JSuplaGuiController @Inject constructor(
         private val preferencesService: PreferencesService,
         private val tokenService: TokenService,
+        private val threadService: ThreadService,
         private val serverApiProvider: Provider<ServerApi>,
-        private val deviceApiProvider: Provider<DeviceApi>) : AbstractGriffonController() {
+        private val deviceApiProvider: Provider<DeviceApi>) : AbstractGriffonController(), AutoCloseable {
+    private val logger = LoggerFactory.getLogger(JSuplaGuiController::class.java)
+    private var updateDeviceFuture: ScheduledFuture<*>? = null
+
     @set:[MVCMember Nonnull]
     lateinit var model: JSuplaGuiModel
 
@@ -52,14 +61,35 @@ class JSuplaGuiController @Inject constructor(
 
     private fun initDevices() {
         log.trace("initDevices")
-        val devices = deviceApiProvider.get().findAllDevice()
-        model.devices.addAll(devices)
+        val command = Runnable {
+            try {
+                logger.debug("Updating all devices")
+                val devices = deviceApiProvider.get().findAllDevice()
+                runInsideUISync {
+                    model.devices.clear()
+                    model.devices.addAll(devices)
+                }
+            } catch (ex: Exception) {
+                logger.error("Cannot fetch devices!", ex)
+            }
+        }
+        updateDeviceFuture = threadService.scheduleEvery(command, 0, preferencesService.readLongWithDefault(PreferencesKeys.refreshTime, 30), TimeUnit.SECONDS)
     }
 
     private fun initThemeToggle() {
         model.darkTheme.addListener { _, _, darkTheme ->
             preferencesService.write(PreferencesKeys.theme, darkTheme)
             application.eventRouter.publishEvent("ThemeChanged")
+        }
+    }
+
+    @PreDestroy
+    override fun close() {
+        try {
+            updateDeviceFuture?.cancel(false)
+            updateDeviceFuture = null
+        } catch (ex: Exception) {
+            logger.error("Cannot close jSuplaGuiController!", ex)
         }
     }
 }
