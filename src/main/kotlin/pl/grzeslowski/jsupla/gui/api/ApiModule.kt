@@ -7,6 +7,7 @@ import pl.grzeslowski.jsupla.api.Api
 import javax.inject.Named
 
 @Named
+@Suppress("unused")
 @ServiceProviderFor(value = [Module::class])
 class ApiModule : AbstractModule() {
     override fun doConfigure() {
