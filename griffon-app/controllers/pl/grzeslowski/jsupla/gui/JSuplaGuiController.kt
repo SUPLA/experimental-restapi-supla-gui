@@ -9,6 +9,7 @@ import pl.grzeslowski.jsupla.gui.api.DeviceApi
 import pl.grzeslowski.jsupla.gui.api.ServerApi
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
+import pl.grzeslowski.jsupla.gui.preferences.TokenService
 import javax.annotation.Nonnull
 import javax.inject.Inject
 import javax.inject.Provider
@@ -16,6 +17,7 @@ import javax.inject.Provider
 @ArtifactProviderFor(GriffonController::class)
 class JSuplaGuiController @Inject constructor(
         private val preferencesService: PreferencesService,
+        private val tokenService: TokenService,
         private val serverApiProvider: Provider<ServerApi>,
         private val deviceApiProvider: Provider<DeviceApi>) : AbstractGriffonController() {
     @set:[MVCMember Nonnull]
@@ -27,7 +29,7 @@ class JSuplaGuiController @Inject constructor(
     }
 
     fun init() {
-        val token = preferencesService.read(PreferencesKeys.token)
+        val token = tokenService.read()
         if (token == null || token.isBlank()) {
             log.debug("Token is not yet stored")
             createMVCGroup("login")

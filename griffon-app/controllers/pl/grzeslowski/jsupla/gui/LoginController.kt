@@ -8,13 +8,12 @@ import griffon.transform.Threading
 import javafx.stage.Window
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonController
 import org.slf4j.LoggerFactory
-import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
-import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
+import pl.grzeslowski.jsupla.gui.preferences.TokenService
 import javax.annotation.Nonnull
 import javax.inject.Inject
 
 @ArtifactProviderFor(GriffonController::class)
-class LoginController @Inject constructor(private val preferencesService: PreferencesService) : AbstractGriffonController() {
+class LoginController @Inject constructor(private val tokenService: TokenService) : AbstractGriffonController() {
     private val logger = LoggerFactory.getLogger(LoginController::class.java)
 
     @set:[MVCMember Nonnull]
@@ -27,7 +26,7 @@ class LoginController @Inject constructor(private val preferencesService: Prefer
         val token = model.token.get()
         if (token != null && token.isNotBlank()) {
             logger.trace("Logging for token {}", token)
-            preferencesService.write(PreferencesKeys.token, token)
+            tokenService.write(token)
             application.getWindowManager<Window>().hide("loginWindow")
             application.eventRouter.publishEvent("NewToken")
         }
