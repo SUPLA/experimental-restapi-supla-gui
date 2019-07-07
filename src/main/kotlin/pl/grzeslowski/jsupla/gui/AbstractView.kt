@@ -6,11 +6,7 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.stage.Stage
 import javafx.stage.Window
-import jfxtras.styles.jmetro8.JMetro
-import jfxtras.styles.jmetro8.JMetro.Style.DARK
-import jfxtras.styles.jmetro8.JMetro.Style.LIGHT
 import org.codehaus.griffon.runtime.javafx.artifact.AbstractJavaFXGriffonView
-import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 
 abstract class AbstractView(protected val preferencesService: PreferencesService) : AbstractJavaFXGriffonView() {
@@ -32,16 +28,18 @@ abstract class AbstractView(protected val preferencesService: PreferencesService
     }
 
     protected fun applyTheme(scene: Scene) {
-        val (add, remove) = findStyle()
-        scene.stylesheets.remove(JMetro::class.java.getResource(remove).toExternalForm())
-        JMetro(add).applyTheme(scene)
+//        val (add, remove) = findStyle()
+//        scene.stylesheets.remove(JMetro::class.java.getResource(remove).toExternalForm())
+//        JMetro(add).applyTheme(scene)
+        scene.stylesheets.add("css/jfoenix-design.css")
         scene.stylesheets.add("css/main-light.css")
+        scene.stylesheets.add("css/jfoenix-fonts.css")
     }
 
-    private fun findStyle(): Pair<JMetro.Style, String> {
-        val isDark = preferencesService.readBoolWithDefault(PreferencesKeys.theme, false)
-        return if (isDark) Pair(DARK, "JMetroLightTheme.css") else Pair(LIGHT, "JMetroDarkTheme.css")
-    }
+//    private fun findStyle(): Pair<JMetro.Style, String> {
+//        val isDark = preferencesService.readBoolWithDefault(PreferencesKeys.theme, false)
+//        return if (isDark) Pair(DARK, "JMetroLightTheme.css") else Pair(LIGHT, "JMetroDarkTheme.css")
+//    }
 
     protected abstract fun internalInit(): Scene
 

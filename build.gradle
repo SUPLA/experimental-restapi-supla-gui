@@ -82,9 +82,10 @@ dependencies {
     compile "org.codehaus.griffon:griffon-javafx:${griffonVersion}"
     compile "org.codehaus.griffon:griffon-guice:${griffonVersion}"
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
-    compile 'org.jfxtras:jmetro:5.5'
-    compile 'org.controlsfx:controlsfx:8.40.15'
-    compile 'pl.grzeslowski.jsupla.api:jsupla-api:3.2.0'
+//    compile 'org.jfxtras:jmetro:5.5'
+//    compile 'org.controlsfx:controlsfx:8.40.15'
+	compile 'com.jfoenix:jfoenix:8.0.8'
+	compile 'pl.grzeslowski.jsupla.api:jsupla-api:3.2.0'
 
     runtime "org.slf4j:slf4j-simple:${slf4jVersion}"
 

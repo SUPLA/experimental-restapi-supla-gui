@@ -12,36 +12,89 @@
 	-fx-padding: 20px;
 }
 
-.tile-header {
+.jfx-toggle-button {
+	-jfx-toggle-color: white;
+	-jfx-untoggle-color: white;
+	-jfx-toggle-line-color: #004c00;
+}
+
+.tile .label.header {
 	-fx-text-fill: white;
 	-fx-font-size: 15pt;
-	-fx-font-family: "Segoe UI Semibold";
+	-fx-font-family: "Roboto Light";
 }
 
-.tile-label {
+.tile .label.comment {
 	-fx-text-fill: white;
 	-fx-font-size: 11pt;
-	-fx-font-family: "Segoe UI Semibold";
-	-fx-opacity: 0.6;
+	-fx-font-family: "Roboto Light";
+	-fx-opacity: 0.8;
 }
 
-.tile-separator {
+.tile .separator {
 	-fx-text-fill: white;
 	-fx-opacity: 0.6;
 }
 
-/*.toggle-switch:selected .thumb-area{*/
-/*	-fx-background-color: linear-gradient(to bottom, derive(-fx-text-box-border, -20%), derive(-fx-text-box-border, -30%)),*/
-/*	linear-gradient(to bottom, derive(#008A00, 30%), #008A00);*/
-/*}*/
+/* LIGHT DEVICE */
+.tile.light-device {
+	-fx-background-color: #0050EF;
+}
 
-/*.toggle-switch:selected .thumb-area{*/
-/*	-fx-background-color: linear-gradient(to bottom, derive(-fx-text-box-border, -20%), derive(-fx-text-box-border, -30%)),*/
-/*	linear-gradient(to bottom, derive(#008A00, 30%), #008A00);*/
-/*	-fx-background-insets: 0, 1;*/
+.tile.light-device .jfx-toggle-button {
+	-jfx-toggle-color: white;
+	-jfx-untoggle-color: white;
+	-jfx-toggle-line-color: #002153;
+}
 
-/*}*/
+/* TEMP & HUM DEVICE */
+.tile.temp-hum-device {
+	-fx-background-color: rgb(229, 20, 0);
+}
 
-/*.tile-slider .track {*/
-/*	-fx-control-inner-background: white;*/
-/*}*/
+.tile.temp-hum-device .label.value {
+	-fx-text-fill: white;
+	-fx-font-size: 20pt;
+	-fx-font-family: "Roboto Light";
+}
+
+/* ROLER SHUTTER DEVICE */
+.tile.roller-shutter {
+	-fx-background-color: #008A00;
+}
+
+.tile.roller-shutter .jfx-toggle-button {
+	-jfx-toggle-color: white;
+	-jfx-untoggle-color: white;
+	-jfx-toggle-line-color: #004c00;
+}
+
+/* COLOR DEVICE */
+.tile.color-device {
+	-fx-background-color: rgb(254, 193, 4);
+}
+
+.tile.color-device .jfx-slider > .track {
+	-fx-background-color: #B78904;
+}
+
+.tile.color-device .jfx-slider > .thumb {
+	-fx-background-color: black;
+}
+
+.tile.color-device .label {
+	-fx-text-fill: black;
+}
+
+.tile.color-device .jfx-slider > .colored-track {
+	-fx-background-color: black;
+}
+
+.tile.color-device .jfx-slider > .animated-thumb {
+	-fx-background-color: black;
+}
+
+.tile.color-device .jfx-slider .slider-value {
+	-fx-fill: white;
+	-fx-stroke: white;
+}

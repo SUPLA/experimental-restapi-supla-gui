@@ -1,38 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--suppress JavaFxUnresolvedFxIdReference -->
+<?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import org.controlsfx.control.ToggleSwitch?>
-<VBox minHeight="200.0" minWidth="400.0"
-	  xmlns:fx="http://javafx.com/fxml"
-	  fx:controller="pl.grzeslowski.jsupla.gui.JSuplaGuiController">
-	<ScrollPane fitToHeight="true" fitToWidth="true">
-		<FlowPane fx:id="deviceList"
-				  vgap="10"
-				  hgap="10"
-				  styleClass="devices">
-		</FlowPane>
-	</ScrollPane>
+<BorderPane prefHeight="1000.0" prefWidth="800.0"
+			xmlns:fx="http://javafx.com/fxml"
+			fx:controller="pl.grzeslowski.jsupla.gui.JSuplaGuiController">
+	<center>
+		<ScrollPane fx:id="scroll" fitToHeight="true" fitToWidth="true">
+			<FlowPane fx:id="deviceList" alignment="TOP_CENTER"
+					  vgap="10"
+					  hgap="10"
+					  styleClass="devices"/>
+		</ScrollPane>
+	</center>
 
-	<HBox>
-		<Label fx:id="addressLabel" text="%jSuplaGui.address"/>
-		<Label fx:id="addressValueLabel" text="N/A"/>
-	</HBox>
-	<HBox>
-		<Label fx:id="cloudVersionLabel" text="%jSuplaGui.cloudVersion"/>
-		<Label fx:id="cloudVersionValueLabel" text="N/A"/>
-	</HBox>
-	<HBox>
-		<Label fx:id="apiVersionLabel" text="%jSuplaGui.apiVersion"/>
-		<Label fx:id="apiVersionValueLabel" text="N/A"/>
-	</HBox>
-	<HBox>
-		<Label fx:id="supportedApiVersionsLabel" text="%jSuplaGui.supportedApiVersions"/>
-		<Label fx:id="supportedApiVersionsValueLabel" text="N/A"/>
-	</HBox>
-	<ToggleSwitch fx:id="themeToggle" text="%jSuplaGui.darkTheme"/>
-</VBox>
+	<bottom>
+		<HBox>
+			<HBox>
+				<Label fx:id="addressLabel" text="%jSuplaGui.address"/>
+				<Label fx:id="addressValueLabel" text="N/A"/>
+			</HBox>
+			<HBox>
+				<Label fx:id="cloudVersionLabel" text="%jSuplaGui.cloudVersion"/>
+				<Label fx:id="cloudVersionValueLabel" text="N/A"/>
+			</HBox>
+			<HBox>
+				<Label fx:id="apiVersionLabel" text="%jSuplaGui.apiVersion"/>
+				<Label fx:id="apiVersionValueLabel" text="N/A"/>
+			</HBox>
+			<HBox>
+				<Label fx:id="supportedApiVersionsLabel" text="%jSuplaGui.supportedApiVersions"/>
+				<Label fx:id="supportedApiVersionsValueLabel" text="N/A"/>
+			</HBox>
+			<JFXToggleButton fx:id="themeToggle" text="%jSuplaGui.darkTheme"/>
+		</HBox>
+	</bottom>
+</BorderPane>
