@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package pl.grzeslowski.jsupla.gui
 
 import javafx.scene.Parent
@@ -33,6 +35,7 @@ abstract class AbstractView(protected val preferencesService: PreferencesService
         val (add, remove) = findStyle()
         scene.stylesheets.remove(JMetro::class.java.getResource(remove).toExternalForm())
         JMetro(add).applyTheme(scene)
+        scene.stylesheets.add("css/main-light.css")
     }
 
     private fun findStyle(): Pair<JMetro.Style, String> {
@@ -40,7 +43,7 @@ abstract class AbstractView(protected val preferencesService: PreferencesService
         return if (isDark) Pair(DARK, "JMetroLightTheme.css") else Pair(LIGHT, "JMetroDarkTheme.css")
     }
 
-    abstract protected fun internalInit(): Scene
+    protected abstract fun internalInit(): Scene
 
-    abstract protected fun windowName(): String
+    protected abstract fun windowName(): String
 }

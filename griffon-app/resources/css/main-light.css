@@ -1,0 +1,47 @@
+.devices {
+	-fx-background-color: white;
+}
+
+/***********************************************************************************************************************
+                                           TILE
+***********************************************************************************************************************/
+.tile {
+	/*-fx-background-color: #8CC26E;  -supla*/
+	/*-fx-background-color: rgb(0,80,239); - blue*/
+	-fx-background-color: #008A00;
+	-fx-padding: 20px;
+}
+
+.tile-header {
+	-fx-text-fill: white;
+	-fx-font-size: 15pt;
+	-fx-font-family: "Segoe UI Semibold";
+}
+
+.tile-label {
+	-fx-text-fill: white;
+	-fx-font-size: 11pt;
+	-fx-font-family: "Segoe UI Semibold";
+	-fx-opacity: 0.6;
+}
+
+.tile-separator {
+	-fx-text-fill: white;
+	-fx-opacity: 0.6;
+}
+
+/*.toggle-switch:selected .thumb-area{*/
+/*	-fx-background-color: linear-gradient(to bottom, derive(-fx-text-box-border, -20%), derive(-fx-text-box-border, -30%)),*/
+/*	linear-gradient(to bottom, derive(#008A00, 30%), #008A00);*/
+/*}*/
+
+/*.toggle-switch:selected .thumb-area{*/
+/*	-fx-background-color: linear-gradient(to bottom, derive(-fx-text-box-border, -20%), derive(-fx-text-box-border, -30%)),*/
+/*	linear-gradient(to bottom, derive(#008A00, 30%), #008A00);*/
+/*	-fx-background-insets: 0, 1;*/
+
+/*}*/
+
+/*.tile-slider .track {*/
+/*	-fx-control-inner-background: white;*/
+/*}*/
