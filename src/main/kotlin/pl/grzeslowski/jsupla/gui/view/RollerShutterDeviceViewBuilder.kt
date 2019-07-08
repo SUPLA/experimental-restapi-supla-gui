@@ -12,8 +12,10 @@ import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import pl.grzeslowski.jsupla.api.channel.RollerShutterChannel
 import pl.grzeslowski.jsupla.api.device.Device
+import pl.grzeslowski.jsupla.gui.view.executor.RollerShutterExecutor
+import javax.inject.Provider
 
-class RollerShutterDeviceViewBuilder : DeviceViewBuilder {
+class RollerShutterDeviceViewBuilder(private val rollerShutterExecutor: Provider<RollerShutterExecutor>) : DeviceViewBuilder {
     override fun build(device: Device, tile: Node): Node? {
         if (isRollerShutterDevice(device).not()) {
             return null
@@ -44,6 +46,7 @@ class RollerShutterDeviceViewBuilder : DeviceViewBuilder {
         openCloseBox.children.addAll(openButton, Separator(Orientation.VERTICAL), closeButton)
 
         val rollerShutterState = Label("Roller Shutter State:")
+        rollerShutterExecutor.get().bind(rollerShutterChannel, openButton, closeButton, openSlider)
 
         node.children.addAll(openCloseBox, rollerShutterState, openSlider)
 

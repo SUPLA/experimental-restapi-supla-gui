@@ -5,13 +5,21 @@ import javafx.scene.control.Label
 import javafx.scene.control.Separator
 import javafx.scene.layout.VBox
 import pl.grzeslowski.jsupla.api.device.Device
+import pl.grzeslowski.jsupla.gui.view.executor.ColorExecutor
+import pl.grzeslowski.jsupla.gui.view.executor.OnOffExecutor
+import pl.grzeslowski.jsupla.gui.view.executor.RollerShutterExecutor
+import javax.inject.Inject
+import javax.inject.Provider
 
-internal class ViewBuilderImpl : ViewBuilder {
+internal class ViewBuilderImpl @Inject constructor(
+        onOffExecutor: Provider<OnOffExecutor>,
+        colorExecutor: Provider<ColorExecutor>,
+        rollerShutterExecutor: Provider<RollerShutterExecutor>) : ViewBuilder {
     private val builders: List<DeviceViewBuilder> = listOf(
-            LightDeviceViewBuilder(),
+            LightDeviceViewBuilder(onOffExecutor),
             TemperatureAndHumidityDeviceViewBuilder(),
-            RgbDeviceViewBuilder(),
-            RollerShutterDeviceViewBuilder())
+            RgbDeviceViewBuilder(colorExecutor),
+            RollerShutterDeviceViewBuilder(rollerShutterExecutor))
 
     override fun buildViewForDevice(device: Device): Node {
         val deviceName = Label(device.name)
