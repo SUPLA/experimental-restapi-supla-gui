@@ -1,6 +1,5 @@
 package pl.grzeslowski.jsupla.gui
 
-import com.jfoenix.controls.JFXToggleButton
 import griffon.core.artifact.GriffonView
 import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
@@ -12,7 +11,6 @@ import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.Pane
 import org.slf4j.LoggerFactory
-import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 import pl.grzeslowski.jsupla.gui.view.ViewBuilder
 import java.util.stream.Collectors
@@ -47,16 +45,10 @@ class JSuplaGuiView @Inject constructor(
     @FXML
     private lateinit var scroll: ScrollPane
 
-    // misc
-    @FXML
-    private lateinit var themeToggle: JFXToggleButton
-
-
     override fun internalInit(): Scene {
         val node: Parent = loadParentFxml()
         initServerInfoLabels()
         initDeviceList()
-        initThemeToggle()
         connectActions(node, controller)
         connectMessageSource(node)
 
@@ -106,10 +98,5 @@ class JSuplaGuiView @Inject constructor(
                     .collect(Collectors.toList())
             deviceList.children.addAll(nodes)
         })
-    }
-
-    private fun initThemeToggle() {
-        themeToggle.isSelected = preferencesService.readBoolWithDefault(PreferencesKeys.theme, false)
-        model.darkTheme.bindBidirectional(themeToggle.selectedProperty())
     }
 }

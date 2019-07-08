@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--suppress JavaFxUnresolvedFxIdReference -->
-<?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -37,7 +36,6 @@
 				<Label fx:id="supportedApiVersionsLabel" text="%jSuplaGui.supportedApiVersions"/>
 				<Label fx:id="supportedApiVersionsValueLabel" text="N/A"/>
 			</HBox>
-			<JFXToggleButton fx:id="themeToggle" text="%jSuplaGui.darkTheme"/>
 		</HBox>
 	</bottom>
 </BorderPane>
