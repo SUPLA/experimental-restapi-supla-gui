@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--suppress JavaFxUnresolvedFxIdReference -->
+<?import com.jfoenix.controls.JFXMasonryPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.TilePane?>
 <BorderPane prefHeight="1000.0" prefWidth="800.0"
 			xmlns:fx="http://javafx.com/fxml"
 			fx:controller="pl.grzeslowski.jsupla.gui.JSuplaGuiController">
 	<center>
 		<ScrollPane fx:id="scroll" fitToHeight="true" fitToWidth="true">
-			<TilePane fx:id="deviceList" alignment="TOP_CENTER"
-					  vgap="10"
-					  hgap="10"
-					  styleClass="devices"/>
+			<JFXMasonryPane fx:id="deviceList" styleClass="devices"/>
 		</ScrollPane>
 	</center>
 
