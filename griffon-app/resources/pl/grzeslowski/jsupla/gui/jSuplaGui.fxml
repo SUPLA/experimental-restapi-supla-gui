@@ -2,17 +2,17 @@
 
 <!--suppress JavaFxUnresolvedFxIdReference -->
 <?import com.jfoenix.controls.JFXMasonryPane?>
+<?import com.jfoenix.controls.JFXScrollPane?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <BorderPane prefHeight="1000.0" prefWidth="800.0"
 			xmlns:fx="http://javafx.com/fxml"
 			fx:controller="pl.grzeslowski.jsupla.gui.JSuplaGuiController">
 	<center>
-		<ScrollPane fx:id="scroll" fitToHeight="true" fitToWidth="true">
+		<JFXScrollPane fx:id="scroll">
 			<JFXMasonryPane fx:id="deviceList" styleClass="devices"/>
-		</ScrollPane>
+		</JFXScrollPane>
 	</center>
 
 	<bottom>

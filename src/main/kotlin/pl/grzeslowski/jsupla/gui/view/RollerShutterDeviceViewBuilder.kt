@@ -48,7 +48,7 @@ class RollerShutterDeviceViewBuilder(private val rollerShutterExecutor: Provider
         val rollerShutterState = Label("Roller Shutter State:")
         rollerShutterExecutor.get().bind(rollerShutterChannel, openButton, closeButton, openSlider)
 
-        node.children.addAll(openCloseBox, rollerShutterState, openSlider)
+        node.children.addAll(rollerShutterState, openSlider, openCloseBox)
 
         return node
     }

@@ -1,18 +1,16 @@
 package pl.grzeslowski.jsupla.gui.view
 
-import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
-import javafx.scene.control.Separator
 import javafx.scene.layout.HBox
-import javafx.scene.layout.Priority
+import javafx.scene.layout.Pane
+import javafx.scene.layout.VBox
 import pl.grzeslowski.jsupla.api.channel.Channel
 import pl.grzeslowski.jsupla.api.channel.HumidityChannel
 import pl.grzeslowski.jsupla.api.channel.TemperatureAndHumidityChannel
 import pl.grzeslowski.jsupla.api.channel.TemperatureChannel
 import pl.grzeslowski.jsupla.api.channel.state.HumidityState
-import pl.grzeslowski.jsupla.api.channel.state.TemperatureAndHumidityState
 import pl.grzeslowski.jsupla.api.channel.state.TemperatureState
 import pl.grzeslowski.jsupla.api.device.Device
 
@@ -30,12 +28,24 @@ class TemperatureAndHumidityDeviceViewBuilder : DeviceViewBuilder {
                 .findAny()
                 .orElseThrow { IllegalStateException("should not happen!") }
 
-        return when (channel) {
-            is TemperatureAndHumidityChannel -> buildTemperatureAndHumidityLabels(channel.state)
-            is TemperatureChannel -> buildTemperatureLabel(channel.state)
-            is HumidityChannel -> buildHumidityLabel(channel.state)
-            else -> throw IllegalStateException("Should not happen!")
+        val left = VBox(3.0)
+        val right = VBox(3.0)
+
+        if (channel is TemperatureChannel) {
+            val label = Label("Temperature:")
+            val value = buildTemperatureLabel(channel.state)
+            addRow(left, right, label, value)
         }
+
+        if (channel is HumidityChannel) {
+            val label = Label("Humidity:")
+            val value = buildHumidityLabel(channel.state)
+            addRow(left, right, label, value)
+        }
+
+        val node = HBox(6.0)
+        node.children.addAll(left, right)
+        return node
     }
 
     private fun isTempAndHumDevice(device: Device) =
@@ -44,37 +54,24 @@ class TemperatureAndHumidityDeviceViewBuilder : DeviceViewBuilder {
     private fun isTempOrHumChannel(channel: Channel) =
             channel is TemperatureChannel || channel is HumidityChannel || channel is TemperatureAndHumidityChannel
 
+    private fun addRow(left: Pane, right: Pane, label: Label, value: Label) {
+        label.styleClass.addAll("value")
+        label.alignment = Pos.CENTER_RIGHT
+        label.maxWidth = Double.MAX_VALUE
+
+        value.styleClass.addAll("value")
+        value.alignment = Pos.CENTER_LEFT
+        value.maxWidth = Double.MAX_VALUE
+
+        left.children.addAll(label)
+        right.children.addAll(value)
+    }
+
     private fun buildTemperatureLabel(state: TemperatureState): Label {
-        val temp = Label(state.temperatureState.toString() + " °C")
-        temp.maxWidth = Double.MAX_VALUE
-        HBox.setHgrow(temp, Priority.ALWAYS)
-        temp.alignment = Pos.CENTER
-        temp.styleClass.addAll("value")
-        return temp
+        return Label(state.temperatureState.toString() + " °C")
     }
 
     private fun buildHumidityLabel(state: HumidityState): Label {
-        val hum = Label(state.humidityState.percentage.toString() + "%")
-        hum.maxWidth = Double.MAX_VALUE
-        HBox.setHgrow(hum, Priority.ALWAYS)
-        hum.alignment = Pos.CENTER
-        hum.styleClass.addAll("value")
-        return hum
-    }
-
-    private fun buildTemperatureAndHumidityLabels(state: TemperatureAndHumidityState): Node {
-        val node = HBox()
-        val temp = buildTemperatureLabel(state)
-        val hum = buildHumidityLabel(state)
-        node.children.addAll(temp, Separator(Orientation.VERTICAL), hum)
-        temp.maxWidth = Double.MAX_VALUE
-        hum.maxWidth = Double.MAX_VALUE
-        HBox.setHgrow(temp, Priority.ALWAYS)
-        HBox.setHgrow(hum, Priority.ALWAYS)
-        temp.alignment = Pos.CENTER
-        hum.alignment = Pos.CENTER
-        temp.styleClass.addAll("value")
-        hum.styleClass.addAll("value")
-        return node
+        return Label(state.humidityState.percentage.toString() + "%")
     }
 }

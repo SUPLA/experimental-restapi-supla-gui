@@ -2,7 +2,6 @@ package pl.grzeslowski.jsupla.gui.view
 
 import javafx.scene.Node
 import javafx.scene.control.Label
-import javafx.scene.control.Separator
 import javafx.scene.layout.VBox
 import pl.grzeslowski.jsupla.api.device.Device
 import pl.grzeslowski.jsupla.gui.view.executor.ColorExecutor
@@ -23,30 +22,36 @@ internal class ViewBuilderImpl @Inject constructor(
 
     override fun buildViewForDevice(device: Device): Node {
         val deviceName = Label(device.name)
-        deviceName.styleClass.addAll("header")
+        deviceName.isWrapText = true
+        deviceName.styleClass.addAll("title")
         val deviceComment: Label? = if (device.comment != null && device.comment.isNotBlank()) {
             val comment = Label(device.comment)
-            comment.styleClass.addAll("comment")
+            comment.styleClass.addAll("sub-title")
+            comment.isWrapText = true
             comment
         } else {
             null
         }
         val node = VBox(3.0)
+        node.styleClass.add("tile")
 
         deviceName.prefWidthProperty().bind(node.prefWidthProperty())
-        deviceComment?.prefWidthProperty()?.bind(node.prefWidthProperty())
+        deviceComment?.prefWidthProperty()?.bind(deviceName.prefWidthProperty())
 
-        node.styleClass.add("tile")
-        node.children.addAll(deviceName)
+        val header = VBox(3.0)
+        header.styleClass.addAll("header")
+        header.children.addAll(deviceName)
         if (deviceComment != null) {
-            node.children.add(deviceComment)
+            header.children.add(deviceComment)
         }
-        node.children.add(Separator())
+        node.children.addAll(header)
+
         val body = builders.stream()
                 .map { it.build(device, node) }
                 .filter { it != null }
                 .findAny()
-                .orElse(buildUnknownLabel())
+                .orElse(buildUnknownLabel())!!
+        body.styleClass.addAll("body")
         node.children.add(body)
         return node
     }

@@ -28,6 +28,7 @@ class LightDeviceViewBuilder(private val onOffExecutor: Provider<OnOffExecutor>)
         return when (channel) {
             is OnOffChannel -> {
                 val toggle = JFXToggleButton()
+                toggle.isWrapText = true
                 toggle.text = channel.caption
                 toggle.isSelected = channel.isConnected
                 onOffExecutor.bind(channel, toggle)
