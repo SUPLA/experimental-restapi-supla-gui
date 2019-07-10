@@ -4,7 +4,7 @@ class Config : AbstractMapResourceBundle() {
     override fun initialize(entries: MutableMap<String, Any>) {
         entries.put("application", hashMapOf(
                 "title" to "Supla",
-                "startupGroups" to listOf("jSuplaGui"),
+                "startupGroups" to listOf("splashScreen"),
                 "autoshutdown" to true
         ))
         entries.put("mvcGroups", hashMapOf(
@@ -16,7 +16,11 @@ class Config : AbstractMapResourceBundle() {
                 "login" to hashMapOf(
                         "model" to "pl.grzeslowski.jsupla.gui.LoginModel",
                         "view" to "pl.grzeslowski.jsupla.gui.LoginView",
-                        "controller" to "pl.grzeslowski.jsupla.gui.LoginController")
+                        "controller" to "pl.grzeslowski.jsupla.gui.LoginController"),
+                "splashScreen" to hashMapOf(
+                        "model" to "pl.grzeslowski.jsupla.gui.SplashScreenModel",
+                        "view" to "pl.grzeslowski.jsupla.gui.SplashScreenView",
+                        "controller" to "pl.grzeslowski.jsupla.gui.SplashScreenController")
         ))
     }
 }

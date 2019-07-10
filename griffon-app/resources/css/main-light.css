@@ -1,5 +1,49 @@
 /*SUPLA COLOR - #8CC26E;*/
 
+/***********************************************************************************************************************
+                                           SPLASH SCREEN
+***********************************************************************************************************************/
+.splash-screen {
+	-fx-background-color: #008A00;
+	-fx-padding: 20px;
+}
+
+.splash-screen .label {
+	-fx-text-fill: white;
+}
+
+.splash-screen .label.title {
+	-fx-font-size: 25pt;
+	-fx-font-family: "Roboto Light";
+}
+
+.splash-screen .jfx-button {
+	-jfx-button-type: RAISED;
+	-fx-background-color: white;
+	-fx-text-fill: #008A00;
+}
+
+.splash-screen .center-box .label {
+	-fx-font-size: 15pt;
+	-fx-font-family: "Roboto Light";
+}
+
+.splash-screen .center-box .label {
+	-fx-font-size: 15pt;
+	-fx-font-family: "Roboto Light";
+}
+
+.splash-screen .center-box .jfx-text-field {
+	-jfx-focus-color: WHITE;
+	-jfx-unfocus-color: WHITE;
+	-fx-text-fill: white;
+}
+
+.splash-screen .center-box .error-icon {
+	-fx-icon-color: white;
+}
+
+/***********************************************************************************************************************/
 .devices {
 	-fx-padding: 20px;
 }

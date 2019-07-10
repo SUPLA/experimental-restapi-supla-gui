@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!--suppress JavaFxUnresolvedFxIdReference -->
+<?import com.jfoenix.controls.JFXProgressBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<BorderPane xmlns="http://javafx.com/javafx"
+			xmlns:fx="http://javafx.com/fxml"
+			fx:controller="pl.grzeslowski.jsupla.gui.LoginController"
+			prefHeight="250.0"
+			prefWidth="400.0"
+			styleClass="splash-screen">
+	<top>
+		<Label text="Supla GUI" styleClass="title" alignment="TOP_CENTER" prefWidth="Infinity"/>
+	</top>
+
+	<center>
+		<VBox fx:id="splashScreenCenterBox" spacing="10" alignment="CENTER" styleClass="center-box">
+			<JFXProgressBar fx:id="progressBar" VBox.vgrow="ALWAYS"/>
+		</VBox>
+	</center>
+
+	<bottom>
+		<HBox alignment="BOTTOM_RIGHT">
+			<Label fx:id="loadingInfo"/>
+			<Label fx:id="version"/>
+		</HBox>
+	</bottom>
+</BorderPane>

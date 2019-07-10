@@ -4,12 +4,16 @@ package pl.grzeslowski.jsupla.gui
 
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.stage.Screen
 import javafx.stage.Stage
 import javafx.stage.Window
 import org.codehaus.griffon.runtime.javafx.artifact.AbstractJavaFXGriffonView
+import org.slf4j.LoggerFactory
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 
+
 abstract class AbstractView(protected val preferencesService: PreferencesService) : AbstractJavaFXGriffonView() {
+    private val logger = LoggerFactory.getLogger(AbstractView::class.java)
     protected lateinit var scene: Scene
 
     protected fun loadParentFxml(): Parent = loadFromFXML() as Parent
@@ -24,8 +28,29 @@ abstract class AbstractView(protected val preferencesService: PreferencesService
         this.scene = internalInit()
         stage.scene = scene
         applyTheme(scene)
+        tweakStage(stage)
         application.getWindowManager<Window>().attach(windowName(), stage)
     }
+
+    protected open fun tweakStage(stage: Stage) {
+
+    }
+
+    /**
+     *  @see https://stackoverflow.com/a/29560563/1819402
+     */
+    protected fun centerWindow(stage: Stage) {
+        val primScreenBounds = Screen.getPrimary().visualBounds
+        stage.x = (primScreenBounds.width - stage.width) / 2
+        stage.y = (primScreenBounds.height - stage.height) / 2
+        if (logger.isTraceEnabled) {
+            logger.trace("Centering window; Stage {}x{}, screen {}x{}, new position {}x{}",
+                    stage.width, stage.height,
+                    primScreenBounds.width, primScreenBounds.height,
+                    stage.x, stage.y)
+        }
+    }
+
 
     protected fun applyTheme(scene: Scene) {
 //        val (add, remove) = findStyle()
