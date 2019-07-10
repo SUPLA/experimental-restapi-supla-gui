@@ -57,32 +57,8 @@ class JSuplaGuiView @Inject constructor(
         connectActions(node, controller)
         connectMessageSource(node)
 
-
-//        node.widthProperty().addListener { _, _, _ ->print("node:width") }
-//        node.heightProperty().addListener { _, _, _ ->print("node:height")}
-//        scroll.widthProperty().addListener { _, _, _ ->print("scroll:width") }
-//        scroll.heightProperty().addListener { _, _, _ ->print("scroll:height")}
-//        deviceList.widthProperty().addListener { _, _, _ ->print("list:width") }
-//        deviceList.heightProperty().addListener { _, _, _ ->print("list:height")}
-
-
-//        scroll.prefWidthProperty().bind(node.widthProperty())
-//        scroll.maxWidthProperty().bind(node.widthProperty())
-//        deviceList.prefWidthProperty().bind(scroll.widthProperty())
-//        deviceList.maxWidthProperty().bind(scroll.widthProperty())
-//        deviceList.prefWrapLengthProperty().bind(scroll.widthProperty())
-//        deviceList.prefHeightProperty().bind(scroll.heightProperty())
-
         return Scene(node)
     }
-
-//    private fun print(event: String) {
-//        logger.info("{}> node: {}x{}, scroll: {}x{}, list: {}x{}",
-//                event,
-//                node.width, node.height,
-//                scroll.width, scroll.height,
-//                deviceList.width, deviceList.height)
-//    }
 
     override fun windowName() = "mainWindow"
 
@@ -103,22 +79,9 @@ class JSuplaGuiView @Inject constructor(
                     .collect(Collectors.toList())
             deviceList.children.addAll(nodes)
         })
-        deviceList.layoutMode = JFXMasonryPane.LayoutMode.BIN_PACKING
     }
 
     private fun initScroll() {
-//        val button = JFXButton("")
-//        val arrow = SVGGlyph(0,
-//                "FULLSCREEN",
-//                "M402.746 877.254l-320-320c-24.994-24.992-24.994-65.516 0-90.51l320-320c24.994-24.992 65.516-24.992 90.51 0 24.994 24.994 "
-//                        + "24.994 65.516 0 90.51l-210.746 210.746h613.49c35.346 0 64 28.654 64 64s-28.654 64-64 64h-613.49l210.746 210.746c12.496 "
-//                        + "12.496 18.744 28.876 18.744 45.254s-6.248 32.758-18.744 45.254c-24.994 24.994-65.516 24.994-90.51 0z",
-//                Color.WHITE)
-//        arrow.setSize(20.0, 16.0)
-//        button.graphic = arrow
-//        button.ripplerFill = Color.WHITE
-//        scroll.getTopBar().getChildren().add(button)
-
         val title = Label("Supla GUI")
         scroll.getBottomBar().getChildren().add(title)
         title.style = "-fx-text-fill:WHITE; -fx-font-size: 40;"
@@ -126,7 +89,5 @@ class JSuplaGuiView @Inject constructor(
 
         StackPane.setMargin(title, Insets(0.0, 0.0, 0.0, 80.0))
         StackPane.setAlignment(title, Pos.CENTER_LEFT)
-//        StackPane.setAlignment(button, Pos.CENTER_LEFT)
-//        StackPane.setMargin(button, Insets(0.0, 0.0, 0.0, 20.0))
     }
 }
