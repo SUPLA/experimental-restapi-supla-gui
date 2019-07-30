@@ -3,7 +3,10 @@ package pl.grzeslowski.jsupla.gui
 import griffon.core.artifact.GriffonModel
 import griffon.javafx.collections.GriffonFXCollections.uiThreadAwareObservableSet
 import griffon.metadata.ArtifactProviderFor
-import javafx.beans.property.*
+import javafx.beans.property.SetProperty
+import javafx.beans.property.SimpleSetProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections.observableSet
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonModel
 import pl.grzeslowski.jsupla.api.device.Device
@@ -17,6 +20,4 @@ class JSuplaGuiModel : AbstractGriffonModel() {
     val supportedApiVersions: StringProperty = SimpleStringProperty(this, "supportedApiVersionsValueLabel", "N/A")
 
     val devices: SetProperty<Device> = SimpleSetProperty(this, "devices", uiThreadAwareObservableSet(observableSet(TreeSet())))
-
-    val darkTheme: BooleanProperty = SimpleBooleanProperty(this, "darkTheme", false)
 }
