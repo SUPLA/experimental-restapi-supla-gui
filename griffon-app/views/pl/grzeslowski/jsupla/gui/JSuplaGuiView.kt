@@ -80,9 +80,9 @@ class JSuplaGuiView @Inject constructor(private val viewBuilder: ViewBuilder) : 
 
     private fun initScroll() {
         val title = Label("Supla GUI")
-        scroll.getBottomBar().getChildren().add(title)
+        scroll.bottomBar.children.add(title)
         title.style = "-fx-text-fill:WHITE; -fx-font-size: 40;"
-        JFXScrollPane.smoothScrolling(scroll.getChildren().get(0) as ScrollPane)
+        JFXScrollPane.smoothScrolling(scroll.children[0] as ScrollPane)
 
         StackPane.setMargin(title, Insets(0.0, 0.0, 0.0, 80.0))
         StackPane.setAlignment(title, Pos.CENTER_LEFT)
