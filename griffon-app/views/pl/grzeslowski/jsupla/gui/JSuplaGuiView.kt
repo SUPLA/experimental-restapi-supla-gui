@@ -15,7 +15,6 @@ import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
 import javafx.scene.layout.StackPane
 import org.slf4j.LoggerFactory
-import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 import pl.grzeslowski.jsupla.gui.view.ViewBuilder
 import java.util.stream.Collectors
 import javax.annotation.Nonnull
@@ -23,9 +22,7 @@ import javax.inject.Inject
 
 
 @ArtifactProviderFor(GriffonView::class)
-class JSuplaGuiView @Inject constructor(
-        preferencesService: PreferencesService,
-        private val viewBuilder: ViewBuilder) : AbstractView(preferencesService) {
+class JSuplaGuiView @Inject constructor(private val viewBuilder: ViewBuilder) : AbstractView() {
     private val logger = LoggerFactory.getLogger(JSuplaGuiView::class.java)
 
     @set:[MVCMember Nonnull]

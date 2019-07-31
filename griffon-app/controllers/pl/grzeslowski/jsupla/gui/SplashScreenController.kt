@@ -67,7 +67,7 @@ class SplashScreenController @Inject constructor(
                     addTextField,
                     addButton
             )
-            return;
+            return
         }
         runOutsideUIAsync {
             checkServerInfo()

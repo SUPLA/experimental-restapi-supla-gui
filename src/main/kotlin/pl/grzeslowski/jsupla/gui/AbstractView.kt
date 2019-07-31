@@ -9,10 +9,9 @@ import javafx.stage.Stage
 import javafx.stage.Window
 import org.codehaus.griffon.runtime.javafx.artifact.AbstractJavaFXGriffonView
 import org.slf4j.LoggerFactory
-import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 
 
-abstract class AbstractView(protected val preferencesService: PreferencesService) : AbstractJavaFXGriffonView() {
+abstract class AbstractView() : AbstractJavaFXGriffonView() {
     private val logger = LoggerFactory.getLogger(AbstractView::class.java)
     protected lateinit var scene: Scene
 

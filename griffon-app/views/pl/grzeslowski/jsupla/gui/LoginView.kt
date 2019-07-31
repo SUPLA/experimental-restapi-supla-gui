@@ -7,12 +7,10 @@ import javafx.fxml.FXML
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.TextField
-import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 import javax.annotation.Nonnull
-import javax.inject.Inject
 
 @ArtifactProviderFor(GriffonView::class)
-class LoginView @Inject constructor(preferencesService: PreferencesService) : AbstractView(preferencesService) {
+class LoginView : AbstractView() {
     @set:[MVCMember Nonnull]
     lateinit var model: LoginModel
     @set:[MVCMember Nonnull]
