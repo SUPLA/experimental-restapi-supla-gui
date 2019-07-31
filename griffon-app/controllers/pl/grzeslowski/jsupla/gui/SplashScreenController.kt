@@ -6,16 +6,22 @@ import griffon.core.artifact.GriffonController
 import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
 import javafx.event.EventHandler
+import javafx.geometry.Pos
 import javafx.scene.control.Label
+import javafx.scene.layout.HBox
+import javafx.scene.layout.Priority
 import javafx.scene.text.TextAlignment
+import javafx.stage.Window
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonController
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.kordamp.ikonli.javafx.FontIcon
 import org.slf4j.LoggerFactory
+import pl.grzeslowski.jsupla.api.ApiException
 import pl.grzeslowski.jsupla.gui.api.DeviceApi
 import pl.grzeslowski.jsupla.gui.api.ServerApi
 import pl.grzeslowski.jsupla.gui.preferences.TokenService
 import pl.grzeslowski.jsupla.gui.validator.TokenValidator
+import java.util.stream.Stream
 import javax.annotation.Nonnull
 import javax.inject.Inject
 import javax.inject.Provider
@@ -33,7 +39,48 @@ class SplashScreenController @Inject constructor(
         init()
     }
 
+    private fun showError(msg: String, ex: Exception) {
+        val loadingInfoMessage = Stream.of(ex.localizedMessage, ex.message, "Unknown")
+                .filter { it != null && it.isBlank().not() }
+                .findFirst()
+                .get()
+        updateLoadingInfoRaw(loadingInfoMessage)
+        val addLabel = Label(findMessage(msg))
+        val refreshButton = JFXButton(findMessage("splashScreen.errorRefreshButton"))
+        refreshButton.onAction = EventHandler { init() }
+        val closeButton = JFXButton(findMessage("splashScreen.errorCloseButton"))
+        closeButton.onAction = EventHandler { application.shutdown() }
+        val buttonLayout = HBox(3.0)
+        buttonLayout.alignment = Pos.CENTER
+        HBox.setHgrow(refreshButton, Priority.ALWAYS)
+        HBox.setHgrow(closeButton, Priority.ALWAYS)
+        buttonLayout.children.addAll(refreshButton, closeButton)
+        runInsideUISync {
+            model.centerBoxChildren.clear()
+            model.centerBoxChildren.addAll(
+                    addLabel,
+                    buttonLayout
+            )
+        }
+    }
+
+    private fun runWithExceptionCheck(runnable: () -> Unit) {
+        try {
+            runnable()
+        } catch (ex: ApiException) {
+            logger.error("API exception occurred!", ex)
+            showError("splashScreen.apiError", ex)
+        } catch (ex: Exception) {
+            logger.error("Generic exception occurred!", ex)
+            showError("splashScreen.genericError", ex)
+        }
+    }
+
     private fun init() {
+        runWithExceptionCheck { initNoExceptionControl() }
+    }
+
+    private fun initNoExceptionControl() {
         model.centerBoxChildren.clear()
         model.centerBoxChildren.add(model.progressBar)
         updateLoadingInfo("splashScreen.loading")
@@ -69,8 +116,8 @@ class SplashScreenController @Inject constructor(
             )
             return
         }
-        runOutsideUIAsync {
-            checkServerInfo()
+        runOutsideUI {
+            runWithExceptionCheck { checkServerInfo() }
         }
     }
 
@@ -108,13 +155,22 @@ class SplashScreenController @Inject constructor(
             }
         } else {
             updateLoadingInfo("splashScreen.go")
+            startMainWindow()
         }
     }
 
     private fun updateLoadingInfo(key: String, vararg params: String) {
-        runInsideUISync {
-            model.loadingInfo.value = application.messageSource.getMessage(key, params.asList())
-        }
+        updateLoadingInfoRaw(application.messageSource.getMessage(key, params.asList()))
+    }
+
+    private fun updateLoadingInfoRaw(msg: String) {
+        runInsideUISync { model.loadingInfo.value = msg }
+    }
+
+    private fun startMainWindow() {
+        createMVCGroup("jSuplaGui")
+        application.getWindowManager<Window>().show("mainWindow")
+        application.getWindowManager<Window>().hide("splashScreenWindow")
     }
 
     private fun findMessage(key: String): String = application.messageSource.getMessage(key)
@@ -128,5 +184,4 @@ class SplashScreenController @Inject constructor(
             model.centerBoxChildren.addAll(notSupportedLabel)
         }
     }
-
 }

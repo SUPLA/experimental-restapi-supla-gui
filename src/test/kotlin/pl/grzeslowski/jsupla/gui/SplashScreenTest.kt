@@ -1,8 +1,11 @@
 package pl.grzeslowski.jsupla.gui
 
+import griffon.core.env.ApplicationPhase
+import griffon.core.mvc.MVCGroup
 import griffon.core.test.GriffonUnitRule
 import griffon.core.test.TestFor
 import griffon.core.test.TestModuleOverrides
+import griffon.core.view.WindowManager
 import javafx.beans.property.SimpleStringProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
@@ -11,6 +14,8 @@ import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
+import javafx.scene.layout.Pane
+import javafx.stage.Window
 import org.awaitility.Awaitility
 import org.codehaus.griffon.runtime.core.injection.AbstractTestingModule
 import org.hamcrest.MatcherAssert.assertThat
@@ -20,8 +25,13 @@ import org.hamcrest.Matchers.isEmptyString
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.BDDMockito.doReturn
 import org.mockito.BDDMockito.given
+import org.mockito.Matchers.any
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+import pl.grzeslowski.jsupla.api.ApiException
+import pl.grzeslowski.jsupla.api.device.Device
 import pl.grzeslowski.jsupla.api.serverinfo.ServerInfo
 import pl.grzeslowski.jsupla.gui.api.DeviceApi
 import pl.grzeslowski.jsupla.gui.api.ServerApi
@@ -32,7 +42,6 @@ import java.util.Arrays.asList
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.collections.HashMap
-
 
 @Suppress("MemberVisibilityCanBePrivate")
 @TestFor(SplashScreenController::class)
@@ -46,7 +55,7 @@ class SplashScreenTest {
 
     @Inject
     lateinit var tokenService: TokenService
-    val properToken = "Some token"
+    val properToken = "MzFhYTNiZTAwODg5M2E0NDE3OGUwNWE5ZjYzZWQ2YzllZGFiYWRmNDQwNDBlNmZhZGEzN2I3NTJiOWM2ZWEyZg.aHR0cDovL2xvY2FsaG9zdDo5MDkw"
     @Inject
     lateinit var serverApi: ServerApi
     @Inject
@@ -81,8 +90,17 @@ class SplashScreenTest {
         val serverInfo = mock(ServerInfo::class.java)
         given(serverInfo.apiVersion).willReturn("3.1")
         given(serverInfo.cloudVersion).willReturn("3.0")
-        given(serverInfo.supportedVersions).willReturn(asList("3.0", "3.1", "3.2"))
+        given(serverInfo.supportedVersions).willReturn(mutableListOf("3.0", "3.1", "3.2"))
         given(serverApi.findServerInfo()).willReturn(serverInfo)
+    }
+
+    @Before
+    fun setupDeviceApi() {
+        val devices = TreeSet<Device>()
+        devices.add(mock(Device::class.java))
+        devices.add(mock(Device::class.java))
+        devices.add(mock(Device::class.java))
+        given(deviceApi.findAllDevice()).willReturn(devices)
     }
 
     @Test
@@ -111,7 +129,7 @@ class SplashScreenTest {
         val serverInfo = mock(ServerInfo::class.java)
         given(serverInfo.apiVersion).willReturn("2.1")
         given(serverInfo.cloudVersion).willReturn("3.0")
-        given(serverInfo.supportedVersions).willReturn(asList("3.0", "3.1", "3.2"))
+        given(serverInfo.supportedVersions).willReturn(mutableListOf("3.0", "3.1", "3.2"))
         given(serverApi.findServerInfo()).willReturn(serverInfo)
 
         // when
@@ -147,6 +165,173 @@ class SplashScreenTest {
         assertThat(loadingInfo.value, equalTo("Please add some devices"))
     }
 
+    @Test
+    fun shouldShowMainWindow() {
+        // given
+        controller.mvcGroup = mock(MVCGroup::class.java)
+
+        // when
+        controller.mvcGroupInit(HashMap())
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { loadingInfo.value == "Ready to go!" }
+
+        // then
+        verify(controller.mvcGroup).createMVCGroup("jSuplaGui")
+        val windowManager = controller.application.getWindowManager<Window>()
+        verify(windowManager).show("mainWindow")
+        verify(windowManager).hide("splashScreenWindow")
+    }
+
+    @Test
+    fun shouldShowMainWindowAfterFillingToken() {
+        // given
+        val token = ""
+        given(tokenService.read()).willReturn(token)
+        controller.mvcGroup = mock(MVCGroup::class.java)
+
+        // when no Token
+        controller.mvcGroupInit(HashMap())
+
+        // fill token
+        val textField = centerBoxChildren[1] as TextField
+        textField.text = properToken
+        given(tokenService.read()).willReturn(properToken)
+        // fire button
+        val button = centerBoxChildren[2] as Button
+        button.fire()
+        // w8
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { loadingInfo.value == "Ready to go!" }
+
+        // then
+        verify(tokenService).write(properToken)
+        verify(controller.mvcGroup).createMVCGroup("jSuplaGui")
+        val windowManager = controller.application.getWindowManager<Window>()
+        verify(windowManager).show("mainWindow")
+        verify(windowManager).hide("splashScreenWindow")
+    }
+
+    @Test
+    fun shouldShowMessageWhenWasApiExceptionOnServerApi() {
+        // given
+        given(serverApi.findServerInfo()).willThrow(ApiException("test-path", io.swagger.client.ApiException("xxx")))
+
+        // when
+        controller.mvcGroupInit(HashMap())
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
+
+        // then
+        assertThat(centerBoxChildren, Matchers.hasSize(2))
+        val label = centerBoxChildren[0] as Label
+        assertThat(label.text, equalTo("API error occurred!"))
+        val pane = centerBoxChildren[1] as Pane
+        assertThat(pane.children, Matchers.hasSize(2))
+        val refreshButton = pane.children[0] as Button
+        assertThat(refreshButton.text, equalTo("Try again"))
+        val closeButton = pane.children[1] as Button
+        assertThat(closeButton.text, equalTo("Close"))
+        assertThat(loadingInfo.value, equalTo("Got error while executing `test-path` API call!."))
+    }
+
+    @Test
+    fun shouldShowMessageWhenWasApiExceptionOnDeviceApi() {
+        // given
+        given(deviceApi.findAllDevice()).willThrow(ApiException("test-path", io.swagger.client.ApiException("xxx")))
+
+        // when
+        controller.mvcGroupInit(HashMap())
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
+
+        // then
+        assertThat(centerBoxChildren, Matchers.hasSize(2))
+        val label = centerBoxChildren[0] as Label
+        assertThat(label.text, equalTo("API error occurred!"))
+        val pane = centerBoxChildren[1] as Pane
+        assertThat(pane.children, Matchers.hasSize(2))
+        val refreshButton = pane.children[0] as Button
+        assertThat(refreshButton.text, equalTo("Try again"))
+        val closeButton = pane.children[1] as Button
+        assertThat(closeButton.text, equalTo("Close"))
+        assertThat(loadingInfo.value, equalTo("Got error while executing `test-path` API call!."))
+    }
+
+    @Test
+    fun shouldShowGenericMessageWhenErrorOccur() {
+        // given
+        given(serverApi.findServerInfo()).willThrow(NullPointerException("xxx"))
+
+        // when
+        controller.mvcGroupInit(HashMap())
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
+
+        // then
+        assertThat(centerBoxChildren, Matchers.hasSize(2))
+        val label = centerBoxChildren[0] as Label
+        assertThat(label.text, equalTo("Generic error occurred!"))
+        val pane = centerBoxChildren[1] as Pane
+        assertThat(pane.children, Matchers.hasSize(2))
+        val refreshButton = pane.children[0] as Button
+        assertThat(refreshButton.text, equalTo("Try again"))
+        val closeButton = pane.children[1] as Button
+        assertThat(closeButton.text, equalTo("Close"))
+        assertThat(loadingInfo.value, equalTo("xxx"))
+    }
+
+
+    @Test
+    fun shouldCloseApplicationAfterErrorOccur() {
+        // given
+        given(controller.application.getWindowManager<Window>().canShutdown(any())).willReturn(true)
+        given(serverApi.findServerInfo()).willThrow(ApiException("test-path", io.swagger.client.ApiException("xxx")))
+
+        // when
+        controller.mvcGroupInit(HashMap())
+        val pane = centerBoxChildren[1] as Pane
+        val closeButton = pane.children[1] as Button
+        closeButton.fire()
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { controller.application.phase == ApplicationPhase.SHUTDOWN }
+
+        // then
+        assertThat(controller.application.phase, equalTo(ApplicationPhase.SHUTDOWN))
+    }
+
+    @Test
+    fun shouldShowMainWindowAfterErrorAndReTry() {
+        // given
+        controller.mvcGroup = mock(MVCGroup::class.java)
+        val serverInfo = serverApi.findServerInfo()
+        given(serverApi.findServerInfo()).willThrow(ApiException("test-path", io.swagger.client.ApiException("xxx")))
+
+        // when exception
+        controller.mvcGroupInit(HashMap())
+        val pane = centerBoxChildren[1] as Pane
+        val refreshButton = pane.children[0] as Button
+        // not throw error anymore
+        doReturn(serverInfo).`when`(serverApi).findServerInfo()
+        refreshButton.fire()
+
+        // w8
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { loadingInfo.value == "Ready to go!" }
+
+        // then
+        verify(controller.mvcGroup).createMVCGroup("jSuplaGui")
+        val windowManager = controller.application.getWindowManager<Window>()
+        verify(windowManager).show("mainWindow")
+        verify(windowManager).hide("splashScreenWindow")
+    }
+
     @Suppress("unused") // Used by `@TestModuleOverrides`
     @TestModuleOverrides
     fun testModuleOverrides(): MutableList<griffon.core.injection.Module> {
@@ -167,6 +352,9 @@ class SplashScreenTest {
                         .asSingleton()
                 bind(TokenService::class.java)
                         .toProvider { mock(TokenService::class.java) }
+                        .asSingleton()
+                bind(WindowManager::class.java)
+                        .toProvider { mock(WindowManager::class.java) }
                         .asSingleton()
             }
         }
