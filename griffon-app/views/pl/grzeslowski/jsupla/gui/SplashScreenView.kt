@@ -11,12 +11,10 @@ import javafx.scene.control.Label
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.stage.StageStyle
-import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 import javax.annotation.Nonnull
-import javax.inject.Inject
 
 @ArtifactProviderFor(GriffonView::class)
-class SplashScreenView @Inject constructor(preferencesService: PreferencesService) : AbstractView(preferencesService) {
+class SplashScreenView : AbstractView() {
     @set:[MVCMember Nonnull]
     lateinit var model: SplashScreenModel
     @set:[MVCMember Nonnull]

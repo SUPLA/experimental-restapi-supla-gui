@@ -14,6 +14,7 @@ buildscript {
         classpath 'de.gliderpilot.gradle.jnlp:gradle-jnlp-plugin:1.2.5'
         classpath 'net.nemerosa:versioning:2.6.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
     }
 }
 
@@ -57,6 +58,7 @@ apply from: 'gradle/docs.gradle'
 apply plugin: 'org.kordamp.gradle.stats'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'kotlin-allopen'
 
 jfx {
     mainClass         = mainClassName
@@ -95,6 +97,7 @@ dependencies {
     testCompile "org.codehaus.griffon:griffon-javafx-test:${griffonVersion}"
     testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
     testCompile "org.spockframework:spock-core:${spockVersion}"
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '1.10.19'
 
     functionalTestCompile "org.codehaus.griffon:griffon-javafx-test:${griffonVersion}"
 }
@@ -107,6 +110,7 @@ task sourceJar(type: Jar) {
 }
 
 sourceSets {
+    //noinspection GroovyAssignabilityCheck
     main {
         kotlin {
             srcDirs += [
@@ -189,6 +193,7 @@ startScripts {
 }
 
 if (hasProperty('debugRun') && ((project.debugRun as boolean))) {
+    //noinspection GroovyAssignabilityCheck
     run {
         jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005'
     }
@@ -212,4 +217,9 @@ task jacocoRootReport(dependsOn: jacocoRootMerge, type: JacocoReport) {
         html.destination = file("${buildDir}/reports/jacoco/root/html")
         xml.destination = file("${buildDir}/reports/jacoco/root/root.xml")
     }
+}
+
+allOpen {
+    //noinspection GrUnresolvedAccess
+    annotation("griffon.metadata.ArtifactProviderFor")
 }
