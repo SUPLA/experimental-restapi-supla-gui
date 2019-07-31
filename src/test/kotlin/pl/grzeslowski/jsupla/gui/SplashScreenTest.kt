@@ -111,6 +111,9 @@ class SplashScreenTest {
 
         // when:
         controller.mvcGroupInit(HashMap())
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
 
         // then:
         assertThat(centerBoxChildren, Matchers.hasSize(3))
@@ -192,6 +195,9 @@ class SplashScreenTest {
 
         // when no Token
         controller.mvcGroupInit(HashMap())
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
 
         // fill token
         val textField = centerBoxChildren[1] as TextField
@@ -294,6 +300,9 @@ class SplashScreenTest {
 
         // when
         controller.mvcGroupInit(HashMap())
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
         val pane = centerBoxChildren[1] as Pane
         val closeButton = pane.children[1] as Button
         closeButton.fire()
@@ -314,6 +323,9 @@ class SplashScreenTest {
 
         // when exception
         controller.mvcGroupInit(HashMap())
+        Awaitility.await()
+                .atMost(10, TimeUnit.SECONDS)
+                .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
         val pane = centerBoxChildren[1] as Pane
         val refreshButton = pane.children[0] as Button
         // not throw error anymore

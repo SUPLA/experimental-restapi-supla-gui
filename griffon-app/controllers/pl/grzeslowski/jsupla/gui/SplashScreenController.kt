@@ -36,7 +36,7 @@ class SplashScreenController @Inject constructor(
     lateinit var model: SplashScreenModel
 
     override fun mvcGroupInit(args: Map<String, Any>) {
-        init()
+        runOutsideUIAsync { init() }
     }
 
     private fun showError(msg: String, ex: Exception) {
