@@ -8,9 +8,13 @@ import javafx.fxml.FXML
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Label
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
 import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import org.kordamp.ikonli.javafx.FontIcon
 import javax.annotation.Nonnull
 
 @ArtifactProviderFor(GriffonView::class)
@@ -28,6 +32,8 @@ class SplashScreenView : AbstractView() {
     private lateinit var loadingInfo: Label
     @FXML
     private lateinit var version: Label
+    @FXML
+    private lateinit var closeButton: FontIcon
 
     override fun internalInit(): Scene {
         centerAfterWindowIsShown()
@@ -35,7 +41,13 @@ class SplashScreenView : AbstractView() {
         bindModel()
         connectActions(node, controller)
         connectMessageSource(node)
-        return Scene(node)
+        val scene = Scene(node)
+        scene.addEventHandler(KeyEvent.KEY_PRESSED) { event ->
+            if (event.code == KeyCode.ESCAPE) {
+                shutdown()
+            }
+        }
+        return scene
     }
 
     private fun bindModel() {
@@ -44,6 +56,13 @@ class SplashScreenView : AbstractView() {
 
         model.centerBoxChildren = splashScreenCenterBox.children
         model.progressBar = progressBar
+        closeButton.addEventHandler(MouseEvent.MOUSE_CLICKED) { shutdown() }
+    }
+
+    private fun shutdown() {
+        runOutsideUI {
+            application.shutdown()
+        }
     }
 
     private fun centerAfterWindowIsShown() {

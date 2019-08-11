@@ -5,7 +5,7 @@
 ***********************************************************************************************************************/
 .splash-screen {
 	-fx-background-color: #008A00;
-	-fx-padding: 20px;
+	-fx-padding: 10px;
 }
 
 .splash-screen .label {
@@ -41,6 +41,14 @@
 
 .splash-screen .center-box .error-icon {
 	-fx-icon-color: white;
+}
+
+.splash-screen .ikonli-font-icon {
+	-fx-icon-color: white;
+}
+
+.splash-screen .icons-rippler {
+	-jfx-mask-type: CIRCLE;
 }
 
 /***********************************************************************************************************************/
