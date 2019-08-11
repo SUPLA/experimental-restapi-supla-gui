@@ -9,11 +9,12 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import pl.grzeslowski.jsupla.api.channel.state.Percentage
+import pl.grzeslowski.jsupla.gui.i18n.InternationalizationService
 import pl.grzeslowski.jsupla.gui.uidevice.*
 import java.math.BigDecimal
 import java.util.concurrent.Callable
 
-class TemperatureAndHumidityDeviceViewBuilder : DeviceViewBuilder {
+class TemperatureAndHumidityDeviceViewBuilder(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
     override fun build(device: UiDevice, tile: Node): Node? {
         if (isTempAndHumDevice(device).not()) {
             return null
@@ -73,7 +74,7 @@ class TemperatureAndHumidityDeviceViewBuilder : DeviceViewBuilder {
     }
 
     private fun addTemperatureLabel(temperature: SimpleObjectProperty<BigDecimal>, left: Pane, right: Pane) {
-        val label = Label("Temperature:")
+        val label = Label(internationalizationService.findMessage("jSuplaGui.tile.temperature"))
         val value = Label()
         value.textProperty().bind(
                 Bindings.createDoubleBinding(Callable { temperature.value.toDouble() }, temperature)
@@ -84,7 +85,7 @@ class TemperatureAndHumidityDeviceViewBuilder : DeviceViewBuilder {
     }
 
     private fun addHumidityLabel(humidity: SimpleObjectProperty<Percentage>, left: Pane, right: Pane) {
-        val label = Label("Humidity:")
+        val label = Label(internationalizationService.findMessage("jSuplaGui.tile.humidity"))
         val value = Label()
         value.textProperty().bind(
                 Bindings.createDoubleBinding(Callable { humidity.value.percentage.toDouble() }, humidity)

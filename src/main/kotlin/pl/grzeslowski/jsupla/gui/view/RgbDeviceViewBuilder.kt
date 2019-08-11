@@ -10,9 +10,10 @@ import javafx.scene.control.Label
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
+import pl.grzeslowski.jsupla.gui.i18n.InternationalizationService
 import pl.grzeslowski.jsupla.gui.uidevice.*
 
-class RgbDeviceViewBuilder : DeviceViewBuilder {
+class RgbDeviceViewBuilder(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
     override fun build(device: UiDevice, tile: Node): Node? {
         if (isRgbDevice(device).not()) {
             return null
@@ -44,7 +45,7 @@ class RgbDeviceViewBuilder : DeviceViewBuilder {
         val dimmer = JFXSlider()
         dimmer.valueProperty().bindBidirectional(brightness)
         node.children.addAll(
-                Label("Brightness:"),
+                Label(internationalizationService.findMessage("jSuplaGui.tile.brightness")),
                 dimmer
         )
     }
@@ -65,11 +66,11 @@ class RgbDeviceViewBuilder : DeviceViewBuilder {
         node.alignment = Pos.TOP_CENTER
         node.children.addAll(
                 colorPicker,
-                Label("Hue:"),
+                Label(internationalizationService.findMessage("jSuplaGui.tile.hue")),
                 hueSlider,
-                Label("Saturation:"),
+                Label(internationalizationService.findMessage("jSuplaGui.tile.saturation")),
                 saturationSlider,
-                Label("Value:"),
+                Label(internationalizationService.findMessage("jSuplaGui.tile.value")),
                 valueSlider
         )
     }

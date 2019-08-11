@@ -4,14 +4,16 @@ import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
+import pl.grzeslowski.jsupla.gui.i18n.InternationalizationService
 import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
+import javax.inject.Inject
 
-internal class ViewBuilderImpl : ViewBuilder {
+internal class ViewBuilderImpl @Inject constructor(private val internationalizationService: InternationalizationService) : ViewBuilder {
     private val builders: List<DeviceViewBuilder> = listOf(
             LightDeviceViewBuilder(),
-            TemperatureAndHumidityDeviceViewBuilder(),
-            RgbDeviceViewBuilder(),
-            RollerShutterDeviceViewBuilder())
+            TemperatureAndHumidityDeviceViewBuilder(internationalizationService),
+            RgbDeviceViewBuilder(internationalizationService),
+            RollerShutterDeviceViewBuilder(internationalizationService))
 
     override fun buildViewForDevice(device: UiDevice): Node {
         val deviceName = Label()
@@ -54,7 +56,7 @@ internal class ViewBuilderImpl : ViewBuilder {
     }
 
     private fun buildUnknownLabel(): Node {
-        val label = Label("Unknown device type")
+        val label = Label(internationalizationService.findMessage("jSuplaGui.tile.unknown"))
         label.styleClass.addAll("value")
         return label
     }

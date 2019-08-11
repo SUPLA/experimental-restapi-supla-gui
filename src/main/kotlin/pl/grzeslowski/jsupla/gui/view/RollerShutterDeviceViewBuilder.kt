@@ -12,10 +12,11 @@ import javafx.scene.control.Separator
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
+import pl.grzeslowski.jsupla.gui.i18n.InternationalizationService
 import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
 import pl.grzeslowski.jsupla.gui.uidevice.UiRollerShutterState
 
-class RollerShutterDeviceViewBuilder : DeviceViewBuilder {
+class RollerShutterDeviceViewBuilder(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
     override fun build(device: UiDevice, tile: Node): Node? {
         if (isRollerShutterDevice(device).not()) {
             return null
@@ -36,8 +37,8 @@ class RollerShutterDeviceViewBuilder : DeviceViewBuilder {
         openSlider.valueProperty().bindBidirectional(state.open)
 
         val openCloseBox = HBox()
-        val openButton = JFXButton("Open")
-        val closeButton = JFXButton("Close")
+        val openButton = JFXButton(internationalizationService.findMessage("jSuplaGui.tile.rollerShutter.open"))
+        val closeButton = JFXButton(internationalizationService.findMessage("jSuplaGui.tile.rollerShutter.close"))
         openButton.maxWidth = Double.MAX_VALUE
         closeButton.maxWidth = Double.MAX_VALUE
         HBox.setHgrow(openButton, Priority.ALWAYS)
