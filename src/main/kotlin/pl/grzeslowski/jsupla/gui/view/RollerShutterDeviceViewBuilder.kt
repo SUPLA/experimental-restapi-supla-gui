@@ -2,6 +2,8 @@ package pl.grzeslowski.jsupla.gui.view
 
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXSlider
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
 import javafx.geometry.Orientation
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -10,29 +12,28 @@ import javafx.scene.control.Separator
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
-import pl.grzeslowski.jsupla.api.channel.RollerShutterChannel
-import pl.grzeslowski.jsupla.api.device.Device
-import pl.grzeslowski.jsupla.gui.view.executor.RollerShutterExecutor
-import javax.inject.Provider
+import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
+import pl.grzeslowski.jsupla.gui.uidevice.UiRollerShutterState
 
-class RollerShutterDeviceViewBuilder(private val rollerShutterExecutor: Provider<RollerShutterExecutor>) : DeviceViewBuilder {
-    override fun build(device: Device, tile: Node): Node? {
+class RollerShutterDeviceViewBuilder : DeviceViewBuilder {
+    override fun build(device: UiDevice, tile: Node): Node? {
         if (isRollerShutterDevice(device).not()) {
             return null
         }
         tile.styleClass.addAll("roller-shutter-device")
 
         @Suppress("ThrowableNotThrown")
-        val rollerShutterChannel = device.channels.stream()
-                .filter { it is RollerShutterChannel }
-                .map { it as RollerShutterChannel }
+        val channel = device.channels
+                .stream()
+                .filter { it.state is UiRollerShutterState }
                 .findAny()
                 .orElseThrow { IllegalStateException("Should not happen") }
+        val state = channel.state as UiRollerShutterState
 
         val node = VBox(6.0)
 
-        val state = rollerShutterChannel.state
-        val openSlider = JFXSlider(0.0, 100.0, state.open.percentage.toDouble())
+        val openSlider = JFXSlider()
+        openSlider.valueProperty().bindBidirectional(state.open)
 
         val openCloseBox = HBox()
         val openButton = JFXButton("Open")
@@ -43,15 +44,21 @@ class RollerShutterDeviceViewBuilder(private val rollerShutterExecutor: Provider
         HBox.setHgrow(closeButton, Priority.ALWAYS)
         openButton.alignment = Pos.CENTER
         closeButton.alignment = Pos.CENTER
+        openButton.onAction = EventHandler<ActionEvent> { state.fireOpen() }
+        closeButton.onAction = EventHandler<ActionEvent> { state.fireClose() }
         openCloseBox.children.addAll(openButton, Separator(Orientation.VERTICAL), closeButton)
+        val rollerShutterState = Label()
+        rollerShutterState.textProperty().bindBidirectional(channel.caption)
 
-        val rollerShutterState = Label("Roller Shutter State:")
-        rollerShutterExecutor.get().bind(rollerShutterChannel, openButton, closeButton, openSlider)
-
+        node.alignment = Pos.TOP_CENTER
         node.children.addAll(rollerShutterState, openSlider, openCloseBox)
 
         return node
     }
 
-    private fun isRollerShutterDevice(device: Device) = device.channels.stream().anyMatch { it is RollerShutterChannel }
+    private fun isRollerShutterDevice(device: UiDevice) =
+            device.channels
+                    .stream()
+                    .map { it.state }
+                    .anyMatch { it is UiRollerShutterState }
 }

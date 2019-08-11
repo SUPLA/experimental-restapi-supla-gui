@@ -35,6 +35,7 @@ import pl.grzeslowski.jsupla.api.device.Device
 import pl.grzeslowski.jsupla.api.serverinfo.ServerInfo
 import pl.grzeslowski.jsupla.gui.api.DeviceApi
 import pl.grzeslowski.jsupla.gui.api.ServerApi
+import pl.grzeslowski.jsupla.gui.db.Database
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 import pl.grzeslowski.jsupla.gui.preferences.TokenService
 import java.util.*
@@ -60,6 +61,8 @@ class SplashScreenTest {
     lateinit var serverApi: ServerApi
     @Inject
     lateinit var deviceApi: DeviceApi
+    @Inject
+    lateinit var database: Database
 
     // model
     lateinit var model: SplashScreenModel
@@ -181,6 +184,10 @@ class SplashScreenTest {
 
         // then
         verify(controller.mvcGroup).createMVCGroup("jSuplaGui")
+        verify(database).clear("serverInfos")
+        verify(database).save("serverInfos", serverApi.findServerInfo())
+        verify(database).clear("devices")
+        verify(database).saveAll("devices", deviceApi.findAllDevice())
         val windowManager = controller.application.getWindowManager<Window>()
         verify(windowManager).show("mainWindow")
         verify(windowManager).hide("splashScreenWindow")
@@ -367,6 +374,9 @@ class SplashScreenTest {
                         .asSingleton()
                 bind(WindowManager::class.java)
                         .toProvider { mock(WindowManager::class.java) }
+                        .asSingleton()
+                bind(Database::class.java)
+                        .toProvider { mock(Database::class.java) }
                         .asSingleton()
             }
         }

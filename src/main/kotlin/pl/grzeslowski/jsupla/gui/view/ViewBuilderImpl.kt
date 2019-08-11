@@ -2,30 +2,25 @@ package pl.grzeslowski.jsupla.gui.view
 
 import javafx.scene.Node
 import javafx.scene.control.Label
+import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
-import pl.grzeslowski.jsupla.api.device.Device
-import pl.grzeslowski.jsupla.gui.view.executor.ColorExecutor
-import pl.grzeslowski.jsupla.gui.view.executor.OnOffExecutor
-import pl.grzeslowski.jsupla.gui.view.executor.RollerShutterExecutor
-import javax.inject.Inject
-import javax.inject.Provider
+import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
 
-internal class ViewBuilderImpl @Inject constructor(
-        onOffExecutor: Provider<OnOffExecutor>,
-        colorExecutor: Provider<ColorExecutor>,
-        rollerShutterExecutor: Provider<RollerShutterExecutor>) : ViewBuilder {
+internal class ViewBuilderImpl : ViewBuilder {
     private val builders: List<DeviceViewBuilder> = listOf(
-            LightDeviceViewBuilder(onOffExecutor),
+            LightDeviceViewBuilder(),
             TemperatureAndHumidityDeviceViewBuilder(),
-            RgbDeviceViewBuilder(colorExecutor),
-            RollerShutterDeviceViewBuilder(rollerShutterExecutor))
+            RgbDeviceViewBuilder(),
+            RollerShutterDeviceViewBuilder())
 
-    override fun buildViewForDevice(device: Device): Node {
-        val deviceName = Label(device.name)
+    override fun buildViewForDevice(device: UiDevice): Node {
+        val deviceName = Label()
+        deviceName.textProperty().bind(device.name)
         deviceName.isWrapText = true
         deviceName.styleClass.addAll("title")
-        val deviceComment: Label? = if (device.comment != null && device.comment.isNotBlank()) {
-            val comment = Label(device.comment)
+        val deviceComment: Label? = if (device.comment.value != null && device.comment.value.isNotBlank()) {
+            val comment = Label()
+            comment.textProperty().bind(device.comment)
             comment.styleClass.addAll("sub-title")
             comment.isWrapText = true
             comment
@@ -51,6 +46,8 @@ internal class ViewBuilderImpl @Inject constructor(
                 .filter { it != null }
                 .findAny()
                 .orElse(buildUnknownLabel())!!
+        body.maxWidth(Double.MAX_VALUE)
+        VBox.setVgrow(body, Priority.ALWAYS)
         body.styleClass.addAll("body")
         node.children.add(body)
         return node

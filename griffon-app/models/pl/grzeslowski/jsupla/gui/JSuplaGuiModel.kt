@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleStringProperty
 import javafx.beans.property.StringProperty
 import javafx.collections.FXCollections.observableSet
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonModel
-import pl.grzeslowski.jsupla.api.device.Device
+import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
 import java.util.*
 
 @ArtifactProviderFor(GriffonModel::class)
@@ -19,5 +19,6 @@ class JSuplaGuiModel : AbstractGriffonModel() {
     val apiVersion: StringProperty = SimpleStringProperty(this, "apiVersionValueLabel", "N/A")
     val supportedApiVersions: StringProperty = SimpleStringProperty(this, "supportedApiVersionsValueLabel", "N/A")
 
-    val devices: SetProperty<Device> = SimpleSetProperty(this, "devices", uiThreadAwareObservableSet(observableSet(TreeSet())))
+    val devices: SetProperty<UiDevice> = SimpleSetProperty(this, "devices", uiThreadAwareObservableSet(observableSet(TreeSet())))
+
 }

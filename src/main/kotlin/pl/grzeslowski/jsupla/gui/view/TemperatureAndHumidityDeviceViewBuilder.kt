@@ -1,21 +1,20 @@
 package pl.grzeslowski.jsupla.gui.view
 
+import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
-import pl.grzeslowski.jsupla.api.channel.Channel
-import pl.grzeslowski.jsupla.api.channel.HumidityChannel
-import pl.grzeslowski.jsupla.api.channel.TemperatureAndHumidityChannel
-import pl.grzeslowski.jsupla.api.channel.TemperatureChannel
-import pl.grzeslowski.jsupla.api.channel.state.HumidityState
-import pl.grzeslowski.jsupla.api.channel.state.TemperatureState
-import pl.grzeslowski.jsupla.api.device.Device
+import pl.grzeslowski.jsupla.api.channel.state.Percentage
+import pl.grzeslowski.jsupla.gui.uidevice.*
+import java.math.BigDecimal
+import java.util.concurrent.Callable
 
 class TemperatureAndHumidityDeviceViewBuilder : DeviceViewBuilder {
-    override fun build(device: Device, tile: Node): Node? {
+    override fun build(device: UiDevice, tile: Node): Node? {
         if (isTempAndHumDevice(device).not()) {
             return null
         }
@@ -24,35 +23,41 @@ class TemperatureAndHumidityDeviceViewBuilder : DeviceViewBuilder {
 
         @Suppress("ThrowableNotThrown")
         val channel = device.channels.stream()
-                .filter { isTempOrHumChannel(it) }
+                .filter { isTempOrHumChannel(it.state) }
                 .findAny()
                 .orElseThrow { IllegalStateException("should not happen!") }
 
         val left = VBox(3.0)
         val right = VBox(3.0)
 
-        if (channel is TemperatureChannel) {
-            val label = Label("Temperature:")
-            val value = buildTemperatureLabel(channel.state)
-            addRow(left, right, label, value)
+        val state = channel.state
+        if (state is UiTemperatureState) {
+            addTemperatureLabel(state.temperature, left, right)
         }
 
-        if (channel is HumidityChannel) {
-            val label = Label("Humidity:")
-            val value = buildHumidityLabel(channel.state)
-            addRow(left, right, label, value)
+        if (state is UiHumidityState) {
+            addHumidityLabel(state.humidity, left, right)
+        }
+
+        if (state is UiTemperatureAndHumidityState) {
+            addTemperatureLabel(state.temperature, left, right)
+            addHumidityLabel(state.humidity, left, right)
         }
 
         val node = HBox(6.0)
+        node.alignment = Pos.TOP_CENTER
         node.children.addAll(left, right)
         return node
     }
 
-    private fun isTempAndHumDevice(device: Device) =
-            device.channels.stream().anyMatch { isTempOrHumChannel(it) }
+    private fun isTempAndHumDevice(device: UiDevice) =
+            device.channels
+                    .stream()
+                    .map { it.state }
+                    .anyMatch { isTempOrHumChannel(it) }
 
-    private fun isTempOrHumChannel(channel: Channel) =
-            channel is TemperatureChannel || channel is HumidityChannel || channel is TemperatureAndHumidityChannel
+    private fun isTempOrHumChannel(state: UiState) =
+            state is UiTemperatureState || state is UiHumidityState || state is UiTemperatureAndHumidityState
 
     private fun addRow(left: Pane, right: Pane, label: Label, value: Label) {
         label.styleClass.addAll("value")
@@ -67,11 +72,25 @@ class TemperatureAndHumidityDeviceViewBuilder : DeviceViewBuilder {
         right.children.addAll(value)
     }
 
-    private fun buildTemperatureLabel(state: TemperatureState): Label {
-        return Label(state.temperatureState.toString() + " °C")
+    private fun addTemperatureLabel(temperature: SimpleObjectProperty<BigDecimal>, left: Pane, right: Pane) {
+        val label = Label("Temperature:")
+        val value = Label()
+        value.textProperty().bind(
+                Bindings.createDoubleBinding(Callable { temperature.value.toDouble() }, temperature)
+                        .asString()
+                        .concat(" °C")
+        )
+        addRow(left, right, label, value)
     }
 
-    private fun buildHumidityLabel(state: HumidityState): Label {
-        return Label(state.humidityState.percentage.toString() + "%")
+    private fun addHumidityLabel(humidity: SimpleObjectProperty<Percentage>, left: Pane, right: Pane) {
+        val label = Label("Humidity:")
+        val value = Label()
+        value.textProperty().bind(
+                Bindings.createDoubleBinding(Callable { humidity.value.percentage.toDouble() }, humidity)
+                        .asString()
+                        .concat("%")
+        )
+        addRow(left, right, label, value)
     }
 }

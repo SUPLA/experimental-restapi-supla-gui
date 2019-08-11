@@ -10,13 +10,13 @@
 			xmlns:fx="http://javafx.com/fxml"
 			fx:controller="pl.grzeslowski.jsupla.gui.JSuplaGuiController">
 	<center>
-		<JFXScrollPane fx:id="scroll">
-			<JFXMasonryPane fx:id="deviceList" styleClass="devices"/>
+		<JFXScrollPane fx:id="scroll" maxHeight="Infinity" maxWidth="Infinity">
+			<JFXMasonryPane fx:id="deviceList" styleClass="devices" maxHeight="Infinity" maxWidth="Infinity"/>
 		</JFXScrollPane>
 	</center>
 
 	<bottom>
-		<HBox>
+		<HBox alignment="BASELINE_RIGHT">
 			<HBox>
 				<Label fx:id="addressLabel" text="%jSuplaGui.address"/>
 				<Label fx:id="addressValueLabel" text="N/A"/>

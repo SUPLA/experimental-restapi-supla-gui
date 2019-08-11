@@ -1,46 +1,49 @@
 package pl.grzeslowski.jsupla.gui.view
 
 import com.jfoenix.controls.JFXToggleButton
+import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.layout.VBox
-import pl.grzeslowski.jsupla.api.channel.Channel
-import pl.grzeslowski.jsupla.api.channel.OnOffChannel
-import pl.grzeslowski.jsupla.api.device.Device
-import pl.grzeslowski.jsupla.gui.view.executor.OnOffExecutor
+import pl.grzeslowski.jsupla.gui.uidevice.UiChannel
+import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
+import pl.grzeslowski.jsupla.gui.uidevice.UiOnOffState
 import java.util.stream.Collectors
-import javax.inject.Provider
 
-class LightDeviceViewBuilder(private val onOffExecutor: Provider<OnOffExecutor>) : DeviceViewBuilder {
-    override fun build(device: Device, tile: Node): Node? {
+class LightDeviceViewBuilder : DeviceViewBuilder {
+    override fun build(device: UiDevice, tile: Node): Node? {
         if (isLightDevice(device).not()) {
             return null
         }
         tile.styleClass.addAll("light-device")
         val node = VBox(3.0)
-        val channels = device.channels.stream()
-                .map { buildChannel(it, onOffExecutor.get()) }
+        val channels = device.channels
+                .stream()
+                .map { buildChannel(it) }
                 .collect(Collectors.toList())
+        node.alignment = Pos.TOP_CENTER
         node.children.addAll(channels)
         return node
     }
 
-    private fun buildChannel(channel: Channel, onOffExecutor: OnOffExecutor): Node {
-        return when (channel) {
-            is OnOffChannel -> {
+    private fun buildChannel(channel: UiChannel): Node {
+        return when (channel.state) {
+            is UiOnOffState -> {
                 val toggle = JFXToggleButton()
+                toggle.isDisable = channel.nativeChannel.isInput
                 toggle.isWrapText = true
-                toggle.text = channel.caption
-                toggle.isSelected = channel.isConnected
-                onOffExecutor.bind(channel, toggle)
+                toggle.textProperty().bindBidirectional(channel.caption)
+                toggle.selectedProperty().bindBidirectional(channel.state.on)
                 toggle
             }
             else -> throw IllegalStateException("Should never happen!")
         }
     }
 
-    private fun isLightDevice(device: Device): Boolean {
-        val numberOfOnOffChannels = device.channels.stream()
-                .filter { it is OnOffChannel }
+    private fun isLightDevice(device: UiDevice): Boolean {
+        val numberOfOnOffChannels = device.channels
+                .stream()
+                .map { it.state }
+                .filter { it is UiOnOffState }
                 .count()
                 .toInt()
         return numberOfOnOffChannels == device.channels.size

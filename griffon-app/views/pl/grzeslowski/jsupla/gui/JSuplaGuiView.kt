@@ -16,7 +16,6 @@ import javafx.scene.control.ScrollPane
 import javafx.scene.layout.StackPane
 import org.slf4j.LoggerFactory
 import pl.grzeslowski.jsupla.gui.view.ViewBuilder
-import java.util.stream.Collectors
 import javax.annotation.Nonnull
 import javax.inject.Inject
 
@@ -49,8 +48,8 @@ class JSuplaGuiView @Inject constructor(private val viewBuilder: ViewBuilder) : 
     override fun internalInit(): Scene {
         val node: Parent = loadParentFxml()
         initServerInfoLabels()
-        initDeviceList()
         initScroll()
+        initDeviceList()
         connectActions(node, controller)
         connectMessageSource(node)
 
@@ -68,13 +67,10 @@ class JSuplaGuiView @Inject constructor(private val viewBuilder: ViewBuilder) : 
 
     private fun initDeviceList() {
         model.devices.addListener(SetChangeListener { change ->
-            log.trace("Updating device set")
-            deviceList.children.clear()
-            val nodes = change.set
-                    .stream()
-                    .map { device -> viewBuilder.buildViewForDevice(device) }
-                    .collect(Collectors.toList())
-            deviceList.children.addAll(nodes)
+            logger.trace("Updating device set")
+            val elementAdded = change.elementAdded
+            val node = viewBuilder.buildViewForDevice(elementAdded)
+            deviceList.children.add(node)
         })
     }
 

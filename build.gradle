@@ -85,7 +85,7 @@ dependencies {
     compile "org.codehaus.griffon:griffon-guice:${griffonVersion}"
     compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
 	compile 'com.jfoenix:jfoenix:8.0.8'
-	compile 'pl.grzeslowski.jsupla.api:jsupla-api:3.2.0'
+	compile 'pl.grzeslowski.jsupla.api:jsupla-api:3.4.0'
 
     // FontAwesome
     // Versions higher than 2.x are for Java 11

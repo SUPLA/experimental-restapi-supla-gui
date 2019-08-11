@@ -3,17 +3,19 @@ package pl.grzeslowski.jsupla.gui
 import griffon.core.artifact.GriffonController
 import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
-import javafx.stage.Window
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonController
 import org.slf4j.LoggerFactory
+import pl.grzeslowski.jsupla.api.device.Device
+import pl.grzeslowski.jsupla.api.serverinfo.ServerInfo
 import pl.grzeslowski.jsupla.gui.api.DeviceApi
-import pl.grzeslowski.jsupla.gui.api.ServerApi
+import pl.grzeslowski.jsupla.gui.db.Database
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
-import pl.grzeslowski.jsupla.gui.preferences.TokenService
 import pl.grzeslowski.jsupla.gui.thread.ThreadService
+import pl.grzeslowski.jsupla.gui.uidevice.*
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import java.util.stream.Collectors
 import javax.annotation.Nonnull
 import javax.annotation.PreDestroy
 import javax.inject.Inject
@@ -22,10 +24,10 @@ import javax.inject.Provider
 @ArtifactProviderFor(GriffonController::class)
 class JSuplaGuiController @Inject constructor(
         private val preferencesService: PreferencesService,
-        private val tokenService: TokenService,
         private val threadService: ThreadService,
-        private val serverApiProvider: Provider<ServerApi>,
-        private val deviceApiProvider: Provider<DeviceApi>) : AbstractGriffonController(), AutoCloseable {
+        private val deviceApiProvider: Provider<DeviceApi>,
+        private val database: Database,
+        private val actionExecutor: ActionExecutor) : AbstractGriffonController(), AutoCloseable {
     private val logger = LoggerFactory.getLogger(JSuplaGuiController::class.java)
     private var updateDeviceFuture: ScheduledFuture<*>? = null
 
@@ -38,20 +40,15 @@ class JSuplaGuiController @Inject constructor(
     }
 
     private fun init() {
-        val token = tokenService.read()
-        if (token == null || token.isBlank()) {
-            log.debug("Token is not yet stored")
-            createMVCGroup("login")
-            application.getWindowManager<Window>().show("loginWindow")
-        } else {
-            initServerInfo()
+        initServerInfo()
+        runOutsideUIAsync {
             initDevices()
         }
     }
 
     private fun initServerInfo() {
         log.trace("initServerInfo")
-        val serverInfo = serverApiProvider.get().findServerInfo()
+        val serverInfo = database.load("serverInfos", ServerInfo::class)
         model.address.value = serverInfo.address
         model.cloudVersion.value = serverInfo.cloudVersion
         model.apiVersion.value = serverInfo.apiVersion
@@ -60,21 +57,54 @@ class JSuplaGuiController @Inject constructor(
 
     private fun initDevices() {
         log.trace("initDevices")
+        val devices = database.loadAll("devices", Device::class)
+                .stream()
+                .map { device -> UiDevice(device) }
+                .collect(Collectors.toList())
+        model.devices.clear()
+        model.devices.addAll(devices)
+
+        val uiStates: Map<UiChannel, UiState> = devices.stream()
+                .map { it.channels }
+                .flatMap { it.stream() }
+                .collect(Collectors.toMap({ it }, { it.state }))
+        actionExecutor.listenOnStates(uiStates)
+
         updateDeviceFuture = threadService.scheduleEvery(this::updateDevices, 0, preferencesService.readLongWithDefault(PreferencesKeys.refreshTime, 30), TimeUnit.SECONDS)
     }
 
     private fun updateDevices() {
-        try {
-            logger.debug("Updating all devices")
-            val devices = deviceApiProvider.get().findAllDevice()
-            runInsideUISync {
-                model.devices.clear()
-                model.devices.addAll(devices)
+        logger.debug("Updating all devices")
+        val deviceApi = deviceApiProvider.get()
+        val devices = database.loadAll("devices", Device::class)
+        for (device in devices) {
+            for (uiDevice in model.devices) {
+                if (device.id == uiDevice.id) {
+                    val refreshedDevice = deviceApi.findDevice(device.id)
+                    runInsideUISync {
+                        uiDevice.name.value = refreshedDevice.name
+                        uiDevice.comment.value = refreshedDevice.comment
+                    }
+                    for (channel in refreshedDevice.channels) {
+                        for (uiChannel in uiDevice.channels) {
+                            if (channel.id == uiChannel.id) {
+                                runInsideUISync {
+                                    uiChannel.caption.value = channel.caption
+                                    uiChannel.connected.value = channel.isConnected
+                                    uiChannel.state.updateByApi {
+                                        updateState(uiChannel.state, channel.state)
+                                    }
+                                }
+                                break
+                            }
+                        }
+                    }
+                    break
+                }
             }
-        } catch (ex: Exception) {
-            logger.error("Cannot fetch devices!", ex)
         }
     }
+
 
     @PreDestroy
     override fun close() {

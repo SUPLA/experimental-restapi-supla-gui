@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory
 import pl.grzeslowski.jsupla.api.ApiException
 import pl.grzeslowski.jsupla.gui.api.DeviceApi
 import pl.grzeslowski.jsupla.gui.api.ServerApi
+import pl.grzeslowski.jsupla.gui.db.Database
 import pl.grzeslowski.jsupla.gui.preferences.TokenService
 import pl.grzeslowski.jsupla.gui.validator.TokenValidator
 import java.util.stream.Stream
@@ -30,7 +31,8 @@ import javax.inject.Provider
 class SplashScreenController @Inject constructor(
         private val tokenService: TokenService,
         private val serverApiProvider: Provider<ServerApi>,
-        private val deviceApiProvider: Provider<DeviceApi>) : AbstractGriffonController() {
+        private val deviceApiProvider: Provider<DeviceApi>,
+        private val database: Database) : AbstractGriffonController() {
     private val logger = LoggerFactory.getLogger(SplashScreenController::class.java)
     @set:[MVCMember Nonnull]
     lateinit var model: SplashScreenModel
@@ -108,12 +110,14 @@ class SplashScreenController @Inject constructor(
                     init()
                 }
             }
-            model.centerBoxChildren.clear()
-            model.centerBoxChildren.addAll(
-                    addLabel,
-                    addTextField,
-                    addButton
-            )
+            runInsideUISync {
+                model.centerBoxChildren.clear()
+                model.centerBoxChildren.addAll(
+                        addLabel,
+                        addTextField,
+                        addButton
+                )
+            }
             return
         }
         runOutsideUI {
@@ -137,6 +141,8 @@ class SplashScreenController @Inject constructor(
                 addMainLabel("splashScreen.notSupportedVersion")
             }
         } else {
+            database.clear("serverInfos")
+            database.save("serverInfos", serverInfo)
             downloadDevices()
         }
     }
@@ -155,6 +161,8 @@ class SplashScreenController @Inject constructor(
             }
         } else {
             updateLoadingInfo("splashScreen.go")
+            database.clear("devices")
+            database.saveAll("devices", allDevice)
             startMainWindow()
         }
     }
