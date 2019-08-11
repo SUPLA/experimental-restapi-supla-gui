@@ -13,10 +13,6 @@ class Config : AbstractMapResourceBundle() {
                         "view" to "pl.grzeslowski.jsupla.gui.JSuplaGuiView",
                         "controller" to "pl.grzeslowski.jsupla.gui.JSuplaGuiController"
                 ),
-                "login" to hashMapOf(
-                        "model" to "pl.grzeslowski.jsupla.gui.LoginModel",
-                        "view" to "pl.grzeslowski.jsupla.gui.LoginView",
-                        "controller" to "pl.grzeslowski.jsupla.gui.LoginController"),
                 "splashScreen" to hashMapOf(
                         "model" to "pl.grzeslowski.jsupla.gui.SplashScreenModel",
                         "view" to "pl.grzeslowski.jsupla.gui.SplashScreenView",

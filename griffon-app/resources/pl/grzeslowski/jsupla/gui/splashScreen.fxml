@@ -12,7 +12,7 @@
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 <BorderPane xmlns="http://javafx.com/javafx"
 			xmlns:fx="http://javafx.com/fxml"
-			fx:controller="pl.grzeslowski.jsupla.gui.LoginController"
+			fx:controller="pl.grzeslowski.jsupla.gui.SplashScreenController"
 			prefHeight="250.0"
 			prefWidth="400.0"
 			styleClass="splash-screen">
