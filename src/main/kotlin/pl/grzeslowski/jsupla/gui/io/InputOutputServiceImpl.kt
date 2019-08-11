@@ -5,8 +5,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.charset.StandardCharsets.UTF_8
 
-class MacOsInputOutputService : InputOutputService {
-    private val logger = LoggerFactory.getLogger(MacOsInputOutputService::class.java)
+class InputOutputServiceImpl : InputOutputService {
+    private val logger = LoggerFactory.getLogger(InputOutputServiceImpl::class.java)
     private val path = System.getProperty("user.home") + "/.supla/"
 
     init {
