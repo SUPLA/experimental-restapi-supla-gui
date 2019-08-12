@@ -10,6 +10,7 @@ import javax.inject.Inject
 
 internal class ViewBuilderImpl @Inject constructor(private val internationalizationService: InternationalizationService) : ViewBuilder {
     private val builders: List<DeviceViewBuilder> = listOf(
+            GateDeviceViewBuilder(internationalizationService),
             LightDeviceViewBuilder(),
             TemperatureAndHumidityDeviceViewBuilder(internationalizationService),
             RgbDeviceViewBuilder(internationalizationService),

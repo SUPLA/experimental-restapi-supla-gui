@@ -97,10 +97,25 @@ class UiRollerShutterState(state: RollerShutterState) : UiState() {
     }
 }
 
+// Gate
+class UiGateState(state: PartialOpenState) : UiState() {
+    val open = SimpleBooleanProperty(state.onOffState == ON)
+    private val openCloseListeners = ArrayList<() -> Unit>()
+
+    fun listenOnOpenClose(listener: () -> Unit) {
+        openCloseListeners.add(listener)
+    }
+
+    fun fireOpenClose() {
+        openCloseListeners.forEach { it() }
+    }
+}
+
 object UndefinedState : UiState()
 
 fun buildUiState(state: State): UiState =
         when (state) {
+            is PartialOpenState -> UiGateState(state)
             is RollerShutterState -> UiRollerShutterState(state)
             is OnOffState -> UiOnOffState(state)
             is TemperatureAndHumidityState -> UiTemperatureAndHumidityState(state)
@@ -114,6 +129,7 @@ fun buildUiState(state: State): UiState =
 
 fun updateState(uiState: UiState, state: State) {
     when (uiState) {
+        is UiGateState -> uiState.open.value = (state as PartialOpenState).onOffState == ON
         is UiRollerShutterState -> uiState.open.value = (state as RollerShutterState).open.percentage.toDouble()
         is UiOnOffState ->
             uiState.on.value = (state as OnOffState).onOffState == ON

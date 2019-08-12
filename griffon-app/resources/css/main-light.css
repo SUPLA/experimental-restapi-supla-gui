@@ -129,6 +129,17 @@
 	-fx-background-color: rgb(229, 20, 0);
 }
 
+/* GATE DEVICE */
+.tile.gate-device .header {
+	-fx-background-color: rgb(255, 62, 19);
+}
+
+.tile.gate-device .jfx-button {
+	-jfx-button-type: RAISED;
+	-fx-background-color: rgb(255, 62, 19);
+	-fx-text-fill: white;
+}
+
 /* ROLLER SHUTTER DEVICE */
 .tile.roller-shutter-device .header {
 	-fx-background-color: #008A00;

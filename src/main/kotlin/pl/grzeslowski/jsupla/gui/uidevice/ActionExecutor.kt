@@ -2,6 +2,7 @@ package pl.grzeslowski.jsupla.gui.uidevice
 
 import org.slf4j.LoggerFactory
 import pl.grzeslowski.jsupla.api.channel.action.ShutRevealAction
+import pl.grzeslowski.jsupla.api.channel.action.ToggleAction.OPEN_CLOSE
 import pl.grzeslowski.jsupla.gui.api.ChannelApi
 import javax.inject.Inject
 import javax.inject.Provider
@@ -18,6 +19,7 @@ class ActionExecutor @Inject constructor(private val channelApiProvider: Provide
 
     private fun listenOnState(channel: UiChannel, state: UiState): () -> Unit =
             when (state) {
+                is UiGateState -> listenOnState(channel, state)
                 is UiOnOffState -> listenOnState(channel, state)
                 is UiColorState -> listenOnState(channel, state)
                 is UiColorAndBrightnessState -> listenOnState(channel, state)
@@ -28,6 +30,13 @@ class ActionExecutor @Inject constructor(private val channelApiProvider: Provide
                 is UiTemperatureState,
                 is UiHumidityState -> ({})
             }
+
+    private fun listenOnState(channel: UiChannel, state: UiGateState): () -> Unit = {
+        val channelApi = channelApiProvider.get()
+        state.listenOnOpenClose {
+            channelApi.executeAction(channel.nativeChannel, OPEN_CLOSE)
+        }
+    }
 
     private fun listenOnState(channel: UiChannel, state: UiOnOffState): () -> Unit = {
         state.on.addListener(OnOffChangeListener(channelApiProvider.get(), state, channel))
