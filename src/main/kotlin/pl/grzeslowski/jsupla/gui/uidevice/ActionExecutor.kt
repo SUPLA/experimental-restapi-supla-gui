@@ -34,6 +34,7 @@ class ActionExecutor @Inject constructor(private val channelApiProvider: Provide
     private fun listenOnState(channel: UiChannel, state: UiGateState): () -> Unit = {
         val channelApi = channelApiProvider.get()
         state.listenOnOpenClose {
+            state.gateState.value = null
             channelApi.executeAction(channel.nativeChannel, OPEN_CLOSE)
         }
     }
