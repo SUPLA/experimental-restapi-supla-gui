@@ -91,8 +91,8 @@ dependencies {
     // Versions higher than 2.x are for Java 11
     compile 'org.kordamp.ikonli:ikonli-javafx:2.4.0'
     compile 'org.kordamp.ikonli:ikonli-fontawesome5-pack:2.4.0'
-    
-    runtime "org.slf4j:slf4j-simple:${slf4jVersion}"
+
+	runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     testCompile "org.codehaus.griffon:griffon-javafx-test:${griffonVersion}"
     testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
