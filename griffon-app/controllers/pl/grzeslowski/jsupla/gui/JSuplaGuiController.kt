@@ -71,6 +71,7 @@ class JSuplaGuiController @Inject constructor(
         actionExecutor.listenOnStates(uiStates)
 
         updateDeviceFuture = threadService.scheduleEvery(this::updateDevices, 0, preferencesService.readLongWithDefault(PreferencesKeys.refreshTime, 30), TimeUnit.SECONDS)
+        model.listenOnRefresh { updateDevices() }
     }
 
     private fun updateDevices() {

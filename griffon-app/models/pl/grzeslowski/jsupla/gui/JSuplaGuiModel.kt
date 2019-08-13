@@ -11,6 +11,7 @@ import javafx.collections.FXCollections.observableSet
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonModel
 import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
 import java.util.*
+import java.util.concurrent.atomic.AtomicReference
 
 @ArtifactProviderFor(GriffonModel::class)
 class JSuplaGuiModel : AbstractGriffonModel() {
@@ -21,4 +22,13 @@ class JSuplaGuiModel : AbstractGriffonModel() {
 
     val devices: SetProperty<UiDevice> = SimpleSetProperty(this, "devices", uiThreadAwareObservableSet(observableSet(TreeSet())))
 
+    private val refreshListener = AtomicReference<() -> Unit>()
+
+    fun fireRefresh() {
+        refreshListener.get()?.invoke()
+    }
+
+    fun listenOnRefresh(runnable: () -> Unit) {
+        refreshListener.set(runnable)
+    }
 }

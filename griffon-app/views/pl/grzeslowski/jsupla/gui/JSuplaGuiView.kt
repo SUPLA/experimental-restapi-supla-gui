@@ -13,6 +13,8 @@ import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.control.ScrollPane
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.StackPane
 import org.slf4j.LoggerFactory
 import pl.grzeslowski.jsupla.gui.view.ViewBuilder
@@ -53,7 +55,15 @@ class JSuplaGuiView @Inject constructor(private val viewBuilder: ViewBuilder) : 
         connectActions(node, controller)
         connectMessageSource(node)
 
-        return Scene(node)
+        val scene = Scene(node)
+        scene.addEventHandler(KeyEvent.KEY_PRESSED) { event ->
+            if (event.code == KeyCode.F5 || event.code == KeyCode.R) {
+                runOutsideUIAsync {
+                    model.fireRefresh()
+                }
+            }
+        }
+        return scene
     }
 
     override fun windowName() = "mainWindow"
