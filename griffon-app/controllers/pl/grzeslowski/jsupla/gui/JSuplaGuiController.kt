@@ -15,6 +15,7 @@ import pl.grzeslowski.jsupla.gui.thread.ThreadService
 import pl.grzeslowski.jsupla.gui.uidevice.*
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
 import javax.annotation.Nonnull
 import javax.annotation.PreDestroy
@@ -30,6 +31,7 @@ class JSuplaGuiController @Inject constructor(
         private val actionExecutor: ActionExecutor) : AbstractGriffonController(), AutoCloseable {
     private val logger = LoggerFactory.getLogger(JSuplaGuiController::class.java)
     private var updateDeviceFuture: ScheduledFuture<*>? = null
+    private val updateDeviceLock = AtomicBoolean(false)
 
     @set:[MVCMember Nonnull]
     lateinit var model: JSuplaGuiModel
@@ -75,37 +77,46 @@ class JSuplaGuiController @Inject constructor(
     }
 
     private fun updateDevices() {
-        logger.debug("Updating all devices")
-        val deviceApi = deviceApiProvider.get()
-        val devices = database.loadAll("devices", Device::class)
-        for (device in devices) {
-            for (uiDevice in model.devices) {
-                if (device.id == uiDevice.id) {
-                    val refreshedDevice = deviceApi.findDevice(device.id)
-                    runInsideUISync {
-                        uiDevice.name.value = refreshedDevice.name
-                        uiDevice.comment.value = refreshedDevice.comment
-                    }
-                    for (channel in refreshedDevice.channels) {
-                        for (uiChannel in uiDevice.channels) {
-                            if (channel.id == uiChannel.id) {
-                                runInsideUISync {
-                                    uiChannel.caption.value = channel.caption
-                                    uiChannel.connected.value = channel.isConnected
-                                    uiChannel.state.updateByApi {
-                                        updateState(uiChannel.state, channel.state)
+        if (updateDeviceLock.getAndSet(true)) {
+            logger.debug("Devices are already updating ; abort")
+            return
+        }
+        try {
+            logger.debug("Updating all devices")
+            val deviceApi = deviceApiProvider.get()
+            val devices = database.loadAll("devices", Device::class)
+            for (device in devices) {
+                for (uiDevice in model.devices) {
+                    if (device.id == uiDevice.id) {
+                        val refreshedDevice = deviceApi.findDevice(device.id)
+                        runInsideUISync {
+                            uiDevice.name.value = refreshedDevice.name
+                            uiDevice.comment.value = refreshedDevice.comment
+                        }
+                        for (channel in refreshedDevice.channels) {
+                            for (uiChannel in uiDevice.channels) {
+                                if (channel.id == uiChannel.id) {
+                                    runInsideUISync {
+                                        uiChannel.caption.value = channel.caption
+                                        uiChannel.connected.value = channel.isConnected
+                                        uiChannel.state.updateByApi {
+                                            updateState(uiChannel.state, channel.state)
+                                        }
                                     }
+                                    break
                                 }
-                                break
                             }
                         }
+                        break
                     }
-                    break
                 }
             }
+        } catch (e: java.lang.Exception) {
+            logger.error("Error while updating devices", e)
+        } finally {
+            updateDeviceLock.set(false)
         }
     }
-
 
     @PreDestroy
     override fun close() {
