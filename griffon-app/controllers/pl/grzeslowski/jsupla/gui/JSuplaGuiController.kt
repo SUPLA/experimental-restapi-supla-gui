@@ -4,7 +4,6 @@ import griffon.core.artifact.GriffonController
 import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
 import javafx.stage.Window
-import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonController
 import org.slf4j.LoggerFactory
 import pl.grzeslowski.jsupla.api.ApiException
 import pl.grzeslowski.jsupla.api.device.Device
@@ -20,7 +19,6 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
 import javax.annotation.Nonnull
-import javax.annotation.PreDestroy
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -30,7 +28,7 @@ class JSuplaGuiController @Inject constructor(
         private val threadService: ThreadService,
         private val deviceApiProvider: Provider<DeviceApi>,
         private val database: Database,
-        private val actionExecutor: ActionExecutor) : AbstractGriffonController(), AutoCloseable {
+        private val actionExecutor: ActionExecutor) : AbstractController(), AutoCloseable {
     private val logger = LoggerFactory.getLogger(JSuplaGuiController::class.java)
     private var updateDeviceFuture: ScheduledFuture<*>? = null
     private val updateDeviceLock = AtomicBoolean(false)
@@ -38,34 +36,11 @@ class JSuplaGuiController @Inject constructor(
     @set:[MVCMember Nonnull]
     lateinit var model: JSuplaGuiModel
 
-    override fun mvcGroupInit(args: Map<String, Any>) {
-        application.eventRouter.addEventListener("WindowShown", { args2 ->
-            val windowName = if (args2.isNotEmpty()) {
-                args2[0]?.toString()
-            } else {
-                null
-            }
-            if (windowName != null && windowName == "mainWindow") {
-                init()
-            }
-        })
-        application.eventRouter.addEventListener("WindowHidden", { args2 ->
-            val windowName = if (args2.isNotEmpty()) {
-                args2[0]?.toString()
-            } else {
-                null
-            }
-            if (windowName != null && windowName == "mainWindow") {
-                close()
-            }
-        })
-    }
+    override fun windowName(): String = "mainWindow"
 
-    private fun init() {
-        runOutsideUIAsync {
-            initServerInfo()
-            initDevices()
-        }
+    override fun initOutsideUi() {
+        initServerInfo()
+        initDevices()
     }
 
     private fun initServerInfo() {
@@ -151,7 +126,6 @@ class JSuplaGuiController @Inject constructor(
         }
     }
 
-    @PreDestroy
     override fun close() {
         try {
             logger.debug("Closing JSuplaController")

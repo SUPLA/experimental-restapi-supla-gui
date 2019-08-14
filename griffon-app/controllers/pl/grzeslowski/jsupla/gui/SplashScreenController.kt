@@ -2,7 +2,6 @@ package pl.grzeslowski.jsupla.gui
 
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
-import griffon.core.RunnableWithArgs
 import griffon.core.artifact.GriffonController
 import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
@@ -13,7 +12,6 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.text.TextAlignment
 import javafx.stage.Window
-import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonController
 import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid
 import org.kordamp.ikonli.javafx.FontIcon
 import org.slf4j.LoggerFactory
@@ -33,22 +31,17 @@ class SplashScreenController @Inject constructor(
         private val tokenService: TokenService,
         private val serverApiProvider: Provider<ServerApi>,
         private val deviceApiProvider: Provider<DeviceApi>,
-        private val database: Database) : AbstractGriffonController() {
+        private val database: Database) : AbstractController() {
     private val logger = LoggerFactory.getLogger(SplashScreenController::class.java)
     @set:[MVCMember Nonnull]
     lateinit var model: SplashScreenModel
 
-    override fun mvcGroupInit(args: Map<String, Any>) {
-        application.eventRouter.addEventListener("WindowShown", RunnableWithArgs { args2 ->
-            val windowName = if (args2.isNotEmpty()) {
-                args2[0]?.toString()
-            } else {
-                null
-            }
-            if (windowName != null && windowName == "splashScreenWindow") {
-                init()
-            }
-        })
+    override fun windowName(): String = "splashScreenWindow"
+
+    override fun initOutsideUi() {
+        runOutsideUIAsync {
+            runWithExceptionCheck { initNoExceptionControl() }
+        }
     }
 
     private fun showError(msg: String, ex: Exception) {
@@ -59,7 +52,7 @@ class SplashScreenController @Inject constructor(
         updateLoadingInfoRaw(loadingInfoMessage)
         val addLabel = Label(findMessage(msg))
         val refreshButton = JFXButton(findMessage("splashScreen.errorRefreshButton"))
-        refreshButton.onAction = EventHandler { init() }
+        refreshButton.onAction = EventHandler { initOutsideUi() }
         val closeButton = JFXButton(findMessage("splashScreen.errorCloseButton"))
         closeButton.onAction = EventHandler { application.shutdown() }
         val buttonLayout = HBox(3.0)
@@ -85,12 +78,6 @@ class SplashScreenController @Inject constructor(
         } catch (ex: Exception) {
             logger.error("Generic exception occurred!", ex)
             showError("splashScreen.genericError", ex)
-        }
-    }
-
-    private fun init() {
-        runOutsideUIAsync {
-            runWithExceptionCheck { initNoExceptionControl() }
         }
     }
 
@@ -121,7 +108,7 @@ class SplashScreenController @Inject constructor(
             addButton.onAction = EventHandler {
                 if (addTextField.validate()) {
                     tokenService.write(addTextField.text)
-                    init()
+                    initOutsideUi()
                 }
             }
             runInsideUISync {
@@ -166,7 +153,7 @@ class SplashScreenController @Inject constructor(
             addMainLabel("splashScreen.noDevices")
             val refresh = JFXButton(findMessage("splashScreen.noDevicesRefreshButton"))
             runInsideUISync {
-                refresh.onAction = EventHandler { init() }
+                refresh.onAction = EventHandler { initOutsideUi() }
                 model.centerBoxChildren.addAll(refresh)
             }
         } else {
