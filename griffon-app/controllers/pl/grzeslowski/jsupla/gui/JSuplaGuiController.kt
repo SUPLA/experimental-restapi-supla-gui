@@ -3,8 +3,10 @@ package pl.grzeslowski.jsupla.gui
 import griffon.core.artifact.GriffonController
 import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
+import javafx.stage.Window
 import org.codehaus.griffon.runtime.core.artifact.AbstractGriffonController
 import org.slf4j.LoggerFactory
+import pl.grzeslowski.jsupla.api.ApiException
 import pl.grzeslowski.jsupla.api.device.Device
 import pl.grzeslowski.jsupla.api.serverinfo.ServerInfo
 import pl.grzeslowski.jsupla.gui.api.DeviceApi
@@ -37,13 +39,31 @@ class JSuplaGuiController @Inject constructor(
     lateinit var model: JSuplaGuiModel
 
     override fun mvcGroupInit(args: Map<String, Any>) {
-        init()
-        application.eventRouter.addEventListener("NewToken") { init() }
+        application.eventRouter.addEventListener("WindowShown", { args2 ->
+            val windowName = if (args2.isNotEmpty()) {
+                args2[0]?.toString()
+            } else {
+                null
+            }
+            if (windowName != null && windowName == "mainWindow") {
+                init()
+            }
+        })
+        application.eventRouter.addEventListener("WindowHidden", { args2 ->
+            val windowName = if (args2.isNotEmpty()) {
+                args2[0]?.toString()
+            } else {
+                null
+            }
+            if (windowName != null && windowName == "mainWindow") {
+                close()
+            }
+        })
     }
 
     private fun init() {
-        initServerInfo()
         runOutsideUIAsync {
+            initServerInfo()
             initDevices()
         }
     }
@@ -51,10 +71,12 @@ class JSuplaGuiController @Inject constructor(
     private fun initServerInfo() {
         log.trace("initServerInfo")
         val serverInfo = database.load("serverInfos", ServerInfo::class)
-        model.address.value = serverInfo.address
-        model.cloudVersion.value = serverInfo.cloudVersion
-        model.apiVersion.value = serverInfo.apiVersion
-        model.supportedApiVersions.value = serverInfo.supportedVersions.joinToString(", ", "[", "]")
+        runInsideUIAsync {
+            model.address.value = serverInfo.address
+            model.cloudVersion.value = serverInfo.cloudVersion
+            model.apiVersion.value = serverInfo.apiVersion
+            model.supportedApiVersions.value = serverInfo.supportedVersions.joinToString(", ", "[", "]")
+        }
     }
 
     private fun initDevices() {
@@ -112,6 +134,9 @@ class JSuplaGuiController @Inject constructor(
                     }
                 }
             }
+        } catch (e: ApiException) {
+            logger.error("Error while updating devices", e)
+            openSplashScreen()
         } catch (e: java.lang.Exception) {
             logger.error("Error while updating devices", e)
         } finally {
@@ -119,9 +144,18 @@ class JSuplaGuiController @Inject constructor(
         }
     }
 
+    private fun openSplashScreen() {
+        runInsideUIAsync {
+            application.getWindowManager<Window>().hide("mainWindow")
+            application.getWindowManager<Window>().show("splashScreenWindow")
+        }
+    }
+
     @PreDestroy
     override fun close() {
         try {
+            logger.debug("Closing JSuplaController")
+            model.clearOnRefresh()
             updateDeviceFuture?.cancel(false)
             updateDeviceFuture = null
         } catch (ex: Exception) {

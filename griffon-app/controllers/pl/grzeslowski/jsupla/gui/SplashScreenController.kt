@@ -2,6 +2,7 @@ package pl.grzeslowski.jsupla.gui
 
 import com.jfoenix.controls.JFXButton
 import com.jfoenix.controls.JFXTextField
+import griffon.core.RunnableWithArgs
 import griffon.core.artifact.GriffonController
 import griffon.inject.MVCMember
 import griffon.metadata.ArtifactProviderFor
@@ -38,7 +39,16 @@ class SplashScreenController @Inject constructor(
     lateinit var model: SplashScreenModel
 
     override fun mvcGroupInit(args: Map<String, Any>) {
-        runOutsideUIAsync { init() }
+        application.eventRouter.addEventListener("WindowShown", RunnableWithArgs { args2 ->
+            val windowName = if (args2.isNotEmpty()) {
+                args2[0]?.toString()
+            } else {
+                null
+            }
+            if (windowName != null && windowName == "splashScreenWindow") {
+                init()
+            }
+        })
     }
 
     private fun showError(msg: String, ex: Exception) {
@@ -79,13 +89,17 @@ class SplashScreenController @Inject constructor(
     }
 
     private fun init() {
-        runWithExceptionCheck { initNoExceptionControl() }
+        runOutsideUIAsync {
+            runWithExceptionCheck { initNoExceptionControl() }
+        }
     }
 
     private fun initNoExceptionControl() {
-        model.centerBoxChildren.clear()
-        model.centerBoxChildren.add(model.progressBar)
-        updateLoadingInfo("splashScreen.loading")
+        runInsideUISync {
+            model.centerBoxChildren.clear()
+            model.centerBoxChildren.add(model.progressBar)
+            updateLoadingInfo("splashScreen.loading")
+        }
         val token = tokenService.read()
         if (token == null || token.isBlank()) {
             logger.trace("Missing token")
@@ -120,9 +134,7 @@ class SplashScreenController @Inject constructor(
             }
             return
         }
-        runOutsideUI {
-            runWithExceptionCheck { checkServerInfo() }
-        }
+        checkServerInfo()
     }
 
     private fun checkServerInfo() {
@@ -137,9 +149,7 @@ class SplashScreenController @Inject constructor(
                 cloudVersion,
                 supportedVersions.joinToString(", ", "[", "]"))
         if (supportedVersions.contains(apiVersion).not()) {
-            runInsideUIAsync {
-                addMainLabel("splashScreen.notSupportedVersion")
-            }
+            addMainLabel("splashScreen.notSupportedVersion")
         } else {
             database.clear("serverInfos")
             database.save("serverInfos", serverInfo)
@@ -155,7 +165,7 @@ class SplashScreenController @Inject constructor(
             updateLoadingInfo("splashScreen.downloadingDevicesFailed")
             addMainLabel("splashScreen.noDevices")
             val refresh = JFXButton(findMessage("splashScreen.noDevicesRefreshButton"))
-            runInsideUIAsync {
+            runInsideUISync {
                 refresh.onAction = EventHandler { init() }
                 model.centerBoxChildren.addAll(refresh)
             }
@@ -176,15 +186,16 @@ class SplashScreenController @Inject constructor(
     }
 
     private fun startMainWindow() {
-        createMVCGroup("jSuplaGui")
-        application.getWindowManager<Window>().show("mainWindow")
-        application.getWindowManager<Window>().hide("splashScreenWindow")
+        runInsideUISync {
+            application.getWindowManager<Window>().show("mainWindow")
+            application.getWindowManager<Window>().hide("splashScreenWindow")
+        }
     }
 
     private fun findMessage(key: String): String = application.messageSource.getMessage(key)
 
     private fun addMainLabel(messageKey: String) {
-        runInsideUIAsync {
+        runInsideUISync {
             val notSupportedLabel = Label(findMessage(messageKey))
             notSupportedLabel.isWrapText = true
             notSupportedLabel.textAlignment = TextAlignment.CENTER

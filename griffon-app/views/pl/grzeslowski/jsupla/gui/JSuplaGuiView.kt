@@ -79,8 +79,10 @@ class JSuplaGuiView @Inject constructor(private val viewBuilder: ViewBuilder) : 
         model.devices.addListener(SetChangeListener { change ->
             logger.trace("Updating device set")
             val elementAdded = change.elementAdded
-            val node = viewBuilder.buildViewForDevice(elementAdded)
-            deviceList.children.add(node)
+            if (elementAdded != null) {
+                val node = viewBuilder.buildViewForDevice(elementAdded)
+                deviceList.children.add(node)
+            }
         })
     }
 

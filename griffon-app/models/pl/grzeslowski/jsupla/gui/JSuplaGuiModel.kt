@@ -31,4 +31,8 @@ class JSuplaGuiModel : AbstractGriffonModel() {
     fun listenOnRefresh(runnable: () -> Unit) {
         refreshListener.set(runnable)
     }
+
+    fun clearOnRefresh() {
+        refreshListener.set { }
+    }
 }
