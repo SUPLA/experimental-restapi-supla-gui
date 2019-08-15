@@ -8,7 +8,7 @@ object PreferencesKeys {
     /**
      * Set how often GUI should check if refresh of devices is valid. Default 10 s
      */
-    const val refreshCheckTime = "refresh__check_time_in_sec"
+    const val refreshCheckTime = "refresh_check_time_in_sec"
     /**
      * Set how many thresds should be in thread pool. Default 3
      */
