@@ -61,6 +61,8 @@ apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'kotlin-allopen'
 
 jfx {
+	verbose = true
+	deployDir = "${project.rootDir}/src/main/deploy"
 	mainClass = mainClassName
 	allPermissions = true
 	keyStoreAlias = 'example-user'
