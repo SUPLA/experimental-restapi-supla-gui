@@ -15,7 +15,8 @@ import pl.grzeslowski.jsupla.gui.uidevice.UiGateState
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
-class GateDeviceViewBuilder @Inject constructor(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
+class GateDeviceViewBuilder @Inject constructor(
+        private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
     override fun build(device: UiDevice, tile: Node): Node? {
         if (isGateDevice(device).not()) {
             return null
@@ -35,6 +36,7 @@ class GateDeviceViewBuilder @Inject constructor(private val internationalization
         val header = Label(internationalizationService.findMessage("jSuplaGui.tile.gate.header"))
         val gateState = Label()
         gateState.styleClass.addAll("value")
+        addDirtyLabelListener(device.updating, gateState)
         gateState.textProperty().bind(
                 Bindings.createStringBinding(
                         Callable {

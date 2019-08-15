@@ -1,6 +1,7 @@
 package pl.grzeslowski.jsupla.gui.view
 
 import javafx.beans.binding.Bindings
+import javafx.beans.property.BooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.geometry.Pos
 import javafx.scene.Node
@@ -34,16 +35,16 @@ class TemperatureAndHumidityDeviceViewBuilder @Inject constructor(private val in
 
         val state = channel.state
         if (state is UiTemperatureState) {
-            addTemperatureLabel(state.temperature, left, right)
+            addTemperatureLabel(state.temperature, left, right, device.updating)
         }
 
         if (state is UiHumidityState) {
-            addHumidityLabel(state.humidity, left, right)
+            addHumidityLabel(state.humidity, left, right, device.updating)
         }
 
         if (state is UiTemperatureAndHumidityState) {
-            addTemperatureLabel(state.temperature, left, right)
-            addHumidityLabel(state.humidity, left, right)
+            addTemperatureLabel(state.temperature, left, right, device.updating)
+            addHumidityLabel(state.humidity, left, right, device.updating)
         }
 
         val node = HBox(6.0)
@@ -74,7 +75,7 @@ class TemperatureAndHumidityDeviceViewBuilder @Inject constructor(private val in
         right.children.addAll(value)
     }
 
-    private fun addTemperatureLabel(temperature: SimpleObjectProperty<BigDecimal>, left: Pane, right: Pane) {
+    private fun addTemperatureLabel(temperature: SimpleObjectProperty<BigDecimal>, left: Pane, right: Pane, updating: BooleanProperty) {
         val label = Label(internationalizationService.findMessage("jSuplaGui.tile.temperature"))
         val value = Label()
         value.textProperty().bind(
@@ -82,10 +83,11 @@ class TemperatureAndHumidityDeviceViewBuilder @Inject constructor(private val in
                         .asString()
                         .concat(" °C")
         )
+        addDirtyLabelListener(updating, value)
         addRow(left, right, label, value)
     }
 
-    private fun addHumidityLabel(humidity: SimpleObjectProperty<Percentage>, left: Pane, right: Pane) {
+    private fun addHumidityLabel(humidity: SimpleObjectProperty<Percentage>, left: Pane, right: Pane, updating: BooleanProperty) {
         val label = Label(internationalizationService.findMessage("jSuplaGui.tile.humidity"))
         val value = Label()
         value.textProperty().bind(
@@ -93,6 +95,7 @@ class TemperatureAndHumidityDeviceViewBuilder @Inject constructor(private val in
                         .asString()
                         .concat("%")
         )
+        addDirtyLabelListener(updating, value)
         addRow(left, right, label, value)
     }
 }

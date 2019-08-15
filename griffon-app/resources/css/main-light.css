@@ -113,6 +113,10 @@
 	-fx-font-family: "Roboto Light";
 }
 
+.tile .label.dirty {
+	-fx-text-fill: #919191;
+}
+
 /* LIGHT DEVICE */
 .tile.light-device .header {
 	-fx-background-color: #0050EF;
