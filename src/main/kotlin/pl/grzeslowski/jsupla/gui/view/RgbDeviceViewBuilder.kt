@@ -13,8 +13,9 @@ import javafx.scene.layout.VBox
 import javafx.scene.paint.Color
 import pl.grzeslowski.jsupla.gui.i18n.InternationalizationService
 import pl.grzeslowski.jsupla.gui.uidevice.*
+import javax.inject.Inject
 
-class RgbDeviceViewBuilder(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
+class RgbDeviceViewBuilder @Inject constructor(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
     override fun build(device: UiDevice, tile: Node): Node? {
         if (isRgbDevice(device).not()) {
             return null

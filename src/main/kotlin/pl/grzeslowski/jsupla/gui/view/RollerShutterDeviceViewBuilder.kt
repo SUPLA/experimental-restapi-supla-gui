@@ -15,8 +15,9 @@ import javafx.scene.layout.VBox
 import pl.grzeslowski.jsupla.gui.i18n.InternationalizationService
 import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
 import pl.grzeslowski.jsupla.gui.uidevice.UiRollerShutterState
+import javax.inject.Inject
 
-class RollerShutterDeviceViewBuilder(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
+class RollerShutterDeviceViewBuilder @Inject constructor(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
     override fun build(device: UiDevice, tile: Node): Node? {
         if (isRollerShutterDevice(device).not()) {
             return null

@@ -13,8 +13,9 @@ import pl.grzeslowski.jsupla.gui.i18n.InternationalizationService
 import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
 import pl.grzeslowski.jsupla.gui.uidevice.UiGateState
 import java.util.concurrent.Callable
+import javax.inject.Inject
 
-class GateDeviceViewBuilder(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
+class GateDeviceViewBuilder @Inject constructor(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
     override fun build(device: UiDevice, tile: Node): Node? {
         if (isGateDevice(device).not()) {
             return null

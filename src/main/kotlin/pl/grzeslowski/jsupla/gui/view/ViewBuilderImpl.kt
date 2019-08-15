@@ -9,13 +9,19 @@ import pl.grzeslowski.jsupla.gui.i18n.InternationalizationService
 import pl.grzeslowski.jsupla.gui.uidevice.UiDevice
 import javax.inject.Inject
 
-internal class ViewBuilderImpl @Inject constructor(private val internationalizationService: InternationalizationService) : ViewBuilder {
+internal class ViewBuilderImpl @Inject constructor(
+        private val internationalizationService: InternationalizationService,
+        gateDeviceViewBuilder: GateDeviceViewBuilder,
+        lightDeviceViewBuilder: LightDeviceViewBuilder,
+        temperatureAndHumidityDeviceViewBuilder: TemperatureAndHumidityDeviceViewBuilder,
+        rgbDeviceViewBuilder: RgbDeviceViewBuilder,
+        rollerShutterDeviceViewBuilder: RollerShutterDeviceViewBuilder) : ViewBuilder {
     private val builders: List<DeviceViewBuilder> = listOf(
-            GateDeviceViewBuilder(internationalizationService),
-            LightDeviceViewBuilder(),
-            TemperatureAndHumidityDeviceViewBuilder(internationalizationService),
-            RgbDeviceViewBuilder(internationalizationService),
-            RollerShutterDeviceViewBuilder(internationalizationService))
+            gateDeviceViewBuilder,
+            lightDeviceViewBuilder,
+            temperatureAndHumidityDeviceViewBuilder,
+            rgbDeviceViewBuilder,
+            rollerShutterDeviceViewBuilder)
 
     override fun buildViewForDevice(device: UiDevice): Node {
         val deviceName = Label()

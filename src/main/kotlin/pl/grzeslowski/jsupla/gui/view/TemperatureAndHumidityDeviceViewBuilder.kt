@@ -13,8 +13,9 @@ import pl.grzeslowski.jsupla.gui.i18n.InternationalizationService
 import pl.grzeslowski.jsupla.gui.uidevice.*
 import java.math.BigDecimal
 import java.util.concurrent.Callable
+import javax.inject.Inject
 
-class TemperatureAndHumidityDeviceViewBuilder(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
+class TemperatureAndHumidityDeviceViewBuilder @Inject constructor(private val internationalizationService: InternationalizationService) : DeviceViewBuilder {
     override fun build(device: UiDevice, tile: Node): Node? {
         if (isTempAndHumDevice(device).not()) {
             return null
