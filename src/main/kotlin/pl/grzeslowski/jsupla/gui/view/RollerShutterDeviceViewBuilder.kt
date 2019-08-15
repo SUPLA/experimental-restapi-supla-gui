@@ -35,10 +35,13 @@ class RollerShutterDeviceViewBuilder(private val internationalizationService: In
 
         val openSlider = JFXSlider()
         openSlider.valueProperty().bindBidirectional(state.open)
+        openSlider.disableProperty().bind(device.updating)
 
         val openCloseBox = HBox()
         val openButton = JFXButton(internationalizationService.findMessage("jSuplaGui.tile.rollerShutter.open"))
         val closeButton = JFXButton(internationalizationService.findMessage("jSuplaGui.tile.rollerShutter.close"))
+        openButton.disableProperty().bind(device.updating)
+        closeButton.disableProperty().bind(device.updating)
         openButton.maxWidth = Double.MAX_VALUE
         closeButton.maxWidth = Double.MAX_VALUE
         HBox.setHgrow(openButton, Priority.ALWAYS)

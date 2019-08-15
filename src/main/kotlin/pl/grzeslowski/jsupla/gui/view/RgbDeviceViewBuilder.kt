@@ -1,6 +1,7 @@
 package pl.grzeslowski.jsupla.gui.view
 
 import com.jfoenix.controls.JFXSlider
+import javafx.beans.property.BooleanProperty
 import javafx.beans.property.DoubleProperty
 import javafx.beans.property.Property
 import javafx.geometry.Pos
@@ -29,38 +30,49 @@ class RgbDeviceViewBuilder(private val internationalizationService: Internationa
 
         val node = VBox(3.0)
 
+        val updating = device.updating
         when {
-            rgbChannel.state is UiColorState -> hsvSliders(rgbChannel.state.hue, rgbChannel.state.saturation, rgbChannel.state.value, rgbChannel.state.rgb, node)
-            rgbChannel.state is UiDimmerState -> dimmerSlider(rgbChannel.state.brightness, node)
+            rgbChannel.state is UiColorState -> hsvSliders(rgbChannel.state.hue, rgbChannel.state.saturation, rgbChannel.state.value, rgbChannel.state.rgb, updating, node)
+            rgbChannel.state is UiDimmerState -> dimmerSlider(rgbChannel.state.brightness, updating, node)
             rgbChannel.state is UiColorAndBrightnessState -> {
-                hsvSliders(rgbChannel.state.hue, rgbChannel.state.saturation, rgbChannel.state.value, rgbChannel.state.rgb, node)
-                dimmerSlider(rgbChannel.state.brightness, node)
+                hsvSliders(rgbChannel.state.hue, rgbChannel.state.saturation, rgbChannel.state.value, rgbChannel.state.rgb, updating, node)
+                dimmerSlider(rgbChannel.state.brightness, updating, node)
             }
         }
 
         return node
     }
 
-    private fun dimmerSlider(brightness: DoubleProperty, node: VBox) {
+    private fun dimmerSlider(brightness: DoubleProperty, updating: BooleanProperty, node: VBox) {
         val dimmer = JFXSlider()
         dimmer.valueProperty().bindBidirectional(brightness)
+        dimmer.disableProperty().bind(updating)
         node.children.addAll(
                 Label(internationalizationService.findMessage("jSuplaGui.tile.brightness")),
                 dimmer
         )
     }
 
-    private fun hsvSliders(hue: DoubleProperty, saturation: DoubleProperty, value: DoubleProperty, color: Property<Color>, node: VBox) {
+    private fun hsvSliders(hue: DoubleProperty,
+                           saturation: DoubleProperty,
+                           value: DoubleProperty,
+                           color: Property<Color>,
+                           updating: BooleanProperty,
+                           node: VBox) {
         val colorPicker = ColorPicker()
+        colorPicker.disableProperty().bind(updating)
         VBox.setVgrow(colorPicker, Priority.ALWAYS)
         colorPicker.maxWidth = Double.MAX_VALUE
         colorPicker.valueProperty().bindBidirectional(color)
         val hueSlider = JFXSlider()
+        hueSlider.disableProperty().bind(updating)
         hueSlider.max = 359.0
         hueSlider.valueProperty().bindBidirectional(hue)
         val saturationSlider = JFXSlider()
+        saturationSlider.disableProperty().bind(updating)
         saturationSlider.valueProperty().bindBidirectional(saturation)
         val valueSlider = JFXSlider()
+        valueSlider.disableProperty().bind(updating)
         valueSlider.valueProperty().bindBidirectional(value)
 
         node.alignment = Pos.TOP_CENTER

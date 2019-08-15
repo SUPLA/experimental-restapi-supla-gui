@@ -1,6 +1,7 @@
 package pl.grzeslowski.jsupla.gui.view
 
 import com.jfoenix.controls.JFXToggleButton
+import javafx.beans.property.BooleanProperty
 import javafx.geometry.Pos
 import javafx.scene.Node
 import javafx.scene.layout.VBox
@@ -18,19 +19,20 @@ class LightDeviceViewBuilder : DeviceViewBuilder {
         val node = VBox(3.0)
         val channels = device.channels
                 .stream()
-                .map { buildChannel(it) }
+                .map { buildChannel(it, device.updating) }
                 .collect(Collectors.toList())
         node.alignment = Pos.TOP_CENTER
         node.children.addAll(channels)
         return node
     }
 
-    private fun buildChannel(channel: UiChannel): Node {
+    private fun buildChannel(channel: UiChannel, updating: BooleanProperty): Node {
         return when (channel.state) {
             is UiOnOffState -> {
                 val toggle = JFXToggleButton()
                 toggle.isDisable = channel.nativeChannel.isInput
                 toggle.isWrapText = true
+                toggle.disableProperty().bind(updating)
                 toggle.textProperty().bindBidirectional(channel.caption)
                 toggle.selectedProperty().bindBidirectional(channel.state.on)
                 toggle

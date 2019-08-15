@@ -47,6 +47,7 @@ class GateDeviceViewBuilder(private val internationalizationService: Internation
                         },
                         state.gateState))
         val button = JFXButton(internationalizationService.findMessage("jSuplaGui.tile.gate.button"))
+        button.disableProperty().bind(device.updating)
         button.onAction = EventHandler<ActionEvent> { state.fireOpenClose() }
         node.alignment = Pos.TOP_CENTER
         node.children.addAll(header, gateState, button)
