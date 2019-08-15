@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Copyright (C) AC SOFTWARE SP. Z O.O.
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<!--suppress JavaFxUnresolvedFxIdReference -->
+<?import com.jfoenix.controls.JFXMasonryPane?>
+<?import com.jfoenix.controls.JFXScrollPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<BorderPane prefHeight="1000.0" prefWidth="800.0"
+			xmlns:fx="http://javafx.com/fxml"
+			fx:controller="org.supla.gui.JSuplaGuiController">
+	<center>
+		<JFXScrollPane fx:id="scroll" maxHeight="Infinity" maxWidth="Infinity">
+			<JFXMasonryPane fx:id="deviceList" styleClass="devices" maxHeight="Infinity" maxWidth="Infinity"/>
+		</JFXScrollPane>
+	</center>
+
+	<bottom>
+		<HBox alignment="BASELINE_RIGHT">
+			<HBox>
+				<Label fx:id="addressLabel" text="%jSuplaGui.address"/>
+				<Label fx:id="addressValueLabel" text="N/A"/>
+			</HBox>
+			<HBox>
+				<Label fx:id="cloudVersionLabel" text="%jSuplaGui.cloudVersion"/>
+				<Label fx:id="cloudVersionValueLabel" text="N/A"/>
+			</HBox>
+			<HBox>
+				<Label fx:id="apiVersionLabel" text="%jSuplaGui.apiVersion"/>
+				<Label fx:id="apiVersionValueLabel" text="N/A"/>
+			</HBox>
+			<HBox>
+				<Label fx:id="supportedApiVersionsLabel" text="%jSuplaGui.supportedApiVersions"/>
+				<Label fx:id="supportedApiVersionsValueLabel" text="N/A"/>
+			</HBox>
+		</HBox>
+	</bottom>
+</BorderPane>

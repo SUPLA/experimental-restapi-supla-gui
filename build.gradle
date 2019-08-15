@@ -45,7 +45,7 @@ ext {
 	]
 }
 
-mainClassName = 'pl.grzeslowski.jsupla.gui.LauncherKt'
+mainClassName = 'org.supla.gui.LauncherKt'
 
 apply from: 'gradle/publishing.gradle'
 apply from: 'gradle/code-coverage.gradle'

@@ -22,14 +22,14 @@ class Config : AbstractMapResourceBundle() {
         ))
         entries.put("mvcGroups", hashMapOf(
                 "jSuplaGui" to hashMapOf(
-                        "model" to "pl.grzeslowski.jsupla.gui.JSuplaGuiModel",
-                        "view" to "pl.grzeslowski.jsupla.gui.JSuplaGuiView",
-                        "controller" to "pl.grzeslowski.jsupla.gui.JSuplaGuiController"
+                        "model" to "org.supla.gui.JSuplaGuiModel",
+                        "view" to "org.supla.gui.JSuplaGuiView",
+                        "controller" to "org.supla.gui.JSuplaGuiController"
                 ),
                 "splashScreen" to hashMapOf(
-                        "model" to "pl.grzeslowski.jsupla.gui.SplashScreenModel",
-                        "view" to "pl.grzeslowski.jsupla.gui.SplashScreenView",
-                        "controller" to "pl.grzeslowski.jsupla.gui.SplashScreenController")
+                        "model" to "org.supla.gui.SplashScreenModel",
+                        "view" to "org.supla.gui.SplashScreenView",
+                        "controller" to "org.supla.gui.SplashScreenController")
         ))
     }
 }

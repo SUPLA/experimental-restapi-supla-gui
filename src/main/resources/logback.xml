@@ -20,6 +20,7 @@
 	</appender>
 
 	<logger name="pl.grzeslowski" level="INFO"/>
+	<logger name="org.supla.gui" level="INFO"/>
 	<root level="ERROR">
 		<appender-ref ref="FILE"/>
 		<appender-ref ref="STDOUT"/>
