@@ -14,8 +14,10 @@ import pl.grzeslowski.jsupla.gui.preferences.PreferencesKeys
 import pl.grzeslowski.jsupla.gui.preferences.PreferencesService
 import pl.grzeslowski.jsupla.gui.thread.ThreadService
 import pl.grzeslowski.jsupla.gui.uidevice.*
+import java.util.*
 import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
+import java.util.concurrent.TimeUnit.SECONDS
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.stream.Collectors
 import javax.annotation.Nonnull
@@ -24,14 +26,17 @@ import javax.inject.Provider
 
 @ArtifactProviderFor(GriffonController::class)
 class JSuplaGuiController @Inject constructor(
-        private val preferencesService: PreferencesService,
         private val threadService: ThreadService,
         private val deviceApiProvider: Provider<DeviceApi>,
         private val database: Database,
-        private val actionExecutor: ActionExecutor) : AbstractController(), AutoCloseable {
+        private val actionExecutor: ActionExecutor,
+        preferencesService: PreferencesService) : AbstractController(), AutoCloseable {
     private val logger = LoggerFactory.getLogger(JSuplaGuiController::class.java)
     private var updateDeviceFuture: ScheduledFuture<*>? = null
     private val updateDeviceLock = AtomicBoolean(false)
+    private val updatePeriod = SECONDS.toMillis(preferencesService.readLongWithDefault(PreferencesKeys.refreshTime, 30))
+    private val updateCheckPeriod = SECONDS.toMillis(preferencesService.readLongWithDefault(PreferencesKeys.refreshCheckTime, 10))
+    private var lastUpdate: Long = 0
 
     @set:[MVCMember Nonnull]
     lateinit var model: JSuplaGuiModel
@@ -69,18 +74,26 @@ class JSuplaGuiController @Inject constructor(
                 .collect(Collectors.toMap({ it }, { it.state }))
         actionExecutor.listenOnStates(uiStates)
 
-        val period = preferencesService.readLongWithDefault(PreferencesKeys.refreshTime, 30)
-        updateDeviceFuture = threadService.scheduleEvery(this::updateDevices, period, period, TimeUnit.SECONDS)
-        model.listenOnRefresh { updateDevices() }
+        updateDeviceFuture = threadService.scheduleEvery(this::updateDevices, updateCheckPeriod, updateCheckPeriod, MILLISECONDS)
+        model.listenOnRefresh {
+            lastUpdate = 0
+            updateDevices()
+        }
     }
 
     private fun updateDevices() {
+        if (now() < lastUpdate + updatePeriod) {
+            logger.debug("Update period did not pass ; abort")
+            logger.trace("{} < {} = {} + {}", now(), lastUpdate + updatePeriod, lastUpdate, updatePeriod)
+            return
+        }
         if (updateDeviceLock.getAndSet(true)) {
             logger.debug("Devices are already updating ; abort")
             return
         }
         try {
             logger.debug("Updating all devices")
+            lastUpdate = now()
             val deviceApi = deviceApiProvider.get()
             val devices = database.loadAll("devices", Device::class)
             model.devices.forEach { it.updating.value = true }
@@ -130,6 +143,8 @@ class JSuplaGuiController @Inject constructor(
             application.getWindowManager<Window>().show("splashScreenWindow")
         }
     }
+
+    private fun now() = Date().time
 
     override fun close() {
         try {
