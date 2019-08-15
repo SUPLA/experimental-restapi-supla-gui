@@ -83,29 +83,34 @@ class JSuplaGuiController @Inject constructor(
             logger.debug("Updating all devices")
             val deviceApi = deviceApiProvider.get()
             val devices = database.loadAll("devices", Device::class)
+            model.devices.forEach { it.updating.value = true }
             for (device in devices) {
                 for (uiDevice in model.devices) {
-                    if (device.id == uiDevice.id) {
-                        val refreshedDevice = deviceApi.findDevice(device.id)
-                        runInsideUISync {
-                            uiDevice.name.value = refreshedDevice.name
-                            uiDevice.comment.value = refreshedDevice.comment
-                        }
-                        for (channel in refreshedDevice.channels) {
-                            for (uiChannel in uiDevice.channels) {
-                                if (channel.id == uiChannel.id) {
-                                    runInsideUISync {
-                                        uiChannel.caption.value = channel.caption
-                                        uiChannel.connected.value = channel.isConnected
-                                        uiChannel.state.updateByApi {
-                                            updateState(uiChannel.state, channel.state)
+                    try {
+                        if (device.id == uiDevice.id) {
+                            val refreshedDevice = deviceApi.findDevice(device.id)
+                            runInsideUISync {
+                                uiDevice.name.value = refreshedDevice.name
+                                uiDevice.comment.value = refreshedDevice.comment
+                            }
+                            for (channel in refreshedDevice.channels) {
+                                for (uiChannel in uiDevice.channels) {
+                                    if (channel.id == uiChannel.id) {
+                                        runInsideUISync {
+                                            uiChannel.caption.value = channel.caption
+                                            uiChannel.connected.value = channel.isConnected
+                                            uiChannel.state.updateByApi {
+                                                updateState(uiChannel.state, channel.state)
+                                            }
                                         }
+                                        break
                                     }
-                                    break
                                 }
                             }
+                            break
                         }
-                        break
+                    } finally {
+                        uiDevice.updating.value = false
                     }
                 }
             }

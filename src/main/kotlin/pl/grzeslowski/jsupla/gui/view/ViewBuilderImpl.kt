@@ -1,5 +1,6 @@
 package pl.grzeslowski.jsupla.gui.view
 
+import com.jfoenix.controls.JFXProgressBar
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.Priority
@@ -36,12 +37,20 @@ internal class ViewBuilderImpl @Inject constructor(private val internationalizat
         deviceName.prefWidthProperty().bind(node.prefWidthProperty())
         deviceComment?.prefWidthProperty()?.bind(deviceName.prefWidthProperty())
 
-        val header = VBox(3.0)
+        val spinner = JFXProgressBar()
+        spinner.visibleProperty().bind(device.updating)
+        spinner.maxWidth = Double.MAX_VALUE
+
+        val header = VBox(9.0)
         header.styleClass.addAll("header")
         header.children.addAll(deviceName)
         if (deviceComment != null) {
             header.children.add(deviceComment)
+            VBox.setVgrow(deviceComment, Priority.ALWAYS)
         }
+        VBox.setVgrow(deviceName, Priority.ALWAYS)
+        VBox.setVgrow(spinner, Priority.ALWAYS)
+        header.children.addAll(spinner)
         node.children.addAll(header)
 
         val body = builders.stream()
