@@ -13,6 +13,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 package org.supla.gui
 
+import griffon.core.GriffonApplication
 import griffon.core.env.ApplicationPhase
 import griffon.core.mvc.MVCGroup
 import griffon.core.test.GriffonUnitRule
@@ -76,6 +77,8 @@ class SplashScreenTest {
     lateinit var deviceApi: DeviceApi
     @Inject
     lateinit var database: Database
+    @Inject
+    lateinit var application: GriffonApplication
 
     // model
     lateinit var model: SplashScreenModel
@@ -127,6 +130,7 @@ class SplashScreenTest {
 
         // when:
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
@@ -153,6 +157,7 @@ class SplashScreenTest {
 
         // when
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
@@ -171,6 +176,7 @@ class SplashScreenTest {
 
         // when
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
@@ -191,12 +197,12 @@ class SplashScreenTest {
 
         // when
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { loadingInfo.value == "Ready to go!" }
 
         // then
-        verify(controller.mvcGroup).createMVCGroup("jSuplaGui")
         verify(database).clear("serverInfos")
         verify(database).save("serverInfos", serverApi.findServerInfo())
         verify(database).clear("devices")
@@ -215,6 +221,7 @@ class SplashScreenTest {
 
         // when no Token
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
@@ -233,7 +240,6 @@ class SplashScreenTest {
 
         // then
         verify(tokenService).write(properToken)
-        verify(controller.mvcGroup).createMVCGroup("jSuplaGui")
         val windowManager = controller.application.getWindowManager<Window>()
         verify(windowManager).show("mainWindow")
         verify(windowManager).hide("splashScreenWindow")
@@ -246,6 +252,7 @@ class SplashScreenTest {
 
         // when
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
@@ -270,6 +277,7 @@ class SplashScreenTest {
 
         // when
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
@@ -294,6 +302,7 @@ class SplashScreenTest {
 
         // when
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
@@ -320,6 +329,7 @@ class SplashScreenTest {
 
         // when
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
@@ -343,6 +353,7 @@ class SplashScreenTest {
 
         // when exception
         controller.mvcGroupInit(HashMap())
+        application.eventRouter.publishEvent("WindowShown", mutableListOf("splashScreenWindow"))
         Awaitility.await()
                 .atMost(10, TimeUnit.SECONDS)
                 .until { centerBoxChildren.size > 0 && centerBoxChildren[0] != null }
@@ -358,7 +369,6 @@ class SplashScreenTest {
                 .until { loadingInfo.value == "Ready to go!" }
 
         // then
-        verify(controller.mvcGroup).createMVCGroup("jSuplaGui")
         val windowManager = controller.application.getWindowManager<Window>()
         verify(windowManager).show("mainWindow")
         verify(windowManager).hide("splashScreenWindow")
