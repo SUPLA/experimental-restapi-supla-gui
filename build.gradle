@@ -69,7 +69,7 @@ jfx {
 	keyStorePassword = 'example-password'
 	jfxMainAppJarName = jar.archiveName
 	appName = project.name
-	vendor = project.name
+	vendor = 'Supla Team'
 }
 
 repositories {
