@@ -17,9 +17,13 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleDoubleProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.scene.paint.Color
+import org.slf4j.LoggerFactory
 import pl.grzeslowski.jsupla.api.channel.state.*
 import pl.grzeslowski.jsupla.api.channel.state.OnOffState.OnOff.ON
 import java.util.concurrent.atomic.AtomicBoolean
+
+
+private val logger = LoggerFactory.getLogger(UiState::class.java)
 
 sealed class UiState {
     private val updatingByApi = AtomicBoolean(false)
@@ -154,5 +158,31 @@ fun updateState(uiState: UiState, state: State) {
             uiState.temperature.value = (state as TemperatureState).temperatureState
         is UiHumidityState ->
             uiState.humidity.value = (state as HumidityState).humidityState
+        is UiColorState -> {
+            val colorState = (state as ColorState)
+            uiState.hue.value = colorState.hsv.hue
+            uiState.saturation.value = colorState.hsv.saturation * 100.0
+            uiState.value.value = colorState.hsv.value * 100.0
+            uiState.rgb.value = Color.hsb(
+                    state.hsv.hue,
+                    state.hsv.saturation,
+                    state.hsv.value
+            )
+        }
+        is UiColorAndBrightnessState -> {
+            val colorState = (state as ColorAndBrightnessState)
+            uiState.hue.value = colorState.hsv.hue
+            uiState.saturation.value = colorState.hsv.saturation * 100.0
+            uiState.value.value = colorState.hsv.value * 100.0
+            uiState.rgb.value = Color.hsb(
+                    state.hsv.hue,
+                    state.hsv.saturation,
+                    state.hsv.value
+            )
+            uiState.brightness.value = colorState.brightness.percentage.toDouble() * 100.0
+        }
+        is UiDimmerState ->
+            uiState.brightness.value = (state as BrightnessState).brightness.percentage.toDouble() * 100.0
+        is UndefinedState -> logger.trace("updateState for {}", state)
     }
 }
