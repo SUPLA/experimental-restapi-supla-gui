@@ -68,12 +68,14 @@
 	-fx-padding: 20px;
 }
 
-.main-header {
+.title-bar {
 	-fx-background-color: #008A00;
+	-fx-padding: 20px;
 }
 
-.condensed-header {
-	-fx-background-color: #008A00;
+.title-bar .label {
+	-fx-text-fill: WHITE;
+	-fx-font-size: 40;
 }
 
 /***********************************************************************************************************************

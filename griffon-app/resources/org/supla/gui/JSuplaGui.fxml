@@ -18,18 +18,25 @@
 
 <!--suppress JavaFxUnresolvedFxIdReference -->
 <?import com.jfoenix.controls.JFXMasonryPane?>
-<?import com.jfoenix.controls.JFXScrollPane?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <BorderPane prefHeight="1000.0" prefWidth="800.0"
 			xmlns:fx="http://javafx.com/fxml"
 			fx:controller="org.supla.gui.JSuplaGuiController">
+	<top>
+		<StackPane styleClass="title-bar">
+			<Label text="Supla GUI" StackPane.alignment="BOTTOM_LEFT"/>
+		</StackPane>
+	</top>
+
 	<center>
-		<JFXScrollPane fx:id="scroll" maxHeight="Infinity" maxWidth="Infinity">
+		<ScrollPane fx:id="scroll" hbarPolicy="NEVER" fitToWidth="true" maxHeight="Infinity" maxWidth="Infinity">
 			<JFXMasonryPane fx:id="deviceList" styleClass="devices" maxHeight="Infinity" maxWidth="Infinity"/>
-		</JFXScrollPane>
+		</ScrollPane>
 	</center>
 
 	<bottom>
