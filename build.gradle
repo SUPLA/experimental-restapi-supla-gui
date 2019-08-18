@@ -70,7 +70,7 @@ jfx {
 	jfxMainAppJarName = jar.archiveName
 	appName = project.name
 	vendor = 'Supla Team'
-	identifier = group
+	identifier = project.group
 	nativeReleaseVersion = version
 }
 
@@ -90,13 +90,12 @@ dependencies {
 	compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
 	compile 'com.jfoenix:jfoenix:8.0.8'
 	compile 'pl.grzeslowski.jsupla.api:jsupla-api:3.5.2'
+	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
 	// FontAwesome
 	// Versions higher than 2.x are for Java 11
 	compile 'org.kordamp.ikonli:ikonli-javafx:2.4.0'
 	compile 'org.kordamp.ikonli:ikonli-fontawesome5-pack:2.4.0'
-
-	runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
 	testCompile "org.codehaus.griffon:griffon-javafx-test:${griffonVersion}"
 	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"

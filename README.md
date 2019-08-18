@@ -50,7 +50,7 @@ Download `Suppla-X.Y.Z.pkg` and double click it. Then follow the installer.
  Download zip filed called `Supla-X.Y.Z.jar`, open terminal and type:
  
  ```shell script
-java -jar Supla-X.Y.Z.jar
+java -jar Supla-native-X.Y.Z.jar
 ```
 
 _Info: This solution requires Java Runtime Environment in at least 8 version_ 
