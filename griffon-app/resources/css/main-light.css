@@ -223,3 +223,12 @@
 	-fx-fill: white;
 	-fx-stroke: white;
 }
+
+/* Unknown device */
+.tile.unknown .header {
+	-fx-background-color: #919191;
+}
+
+.tile.unknown .body .label {
+	-fx-text-fill: #919191;
+}

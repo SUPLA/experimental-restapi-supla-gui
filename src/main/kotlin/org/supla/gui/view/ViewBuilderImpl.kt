@@ -17,6 +17,7 @@ import com.jfoenix.controls.JFXProgressBar
 import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.layout.Priority
+import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
 import org.supla.gui.i18n.InternationalizationService
 import org.supla.gui.uidevice.UiDevice
@@ -76,7 +77,7 @@ internal class ViewBuilderImpl @Inject constructor(
                 .map { it.build(device, node) }
                 .filter { it != null }
                 .findAny()
-                .orElse(buildUnknownLabel())!!
+                .orElseGet { buildUnknownLabel(node) }!!
         body.maxWidth(Double.MAX_VALUE)
         VBox.setVgrow(body, Priority.ALWAYS)
         body.styleClass.addAll("body")
@@ -84,9 +85,10 @@ internal class ViewBuilderImpl @Inject constructor(
         return node
     }
 
-    private fun buildUnknownLabel(): Node {
+    private fun buildUnknownLabel(node: Node): Node {
         val label = Label(internationalizationService.findMessage("jSuplaGui.tile.unknown"))
         label.styleClass.addAll("value")
-        return label
+        node.styleClass.addAll("unknown")
+        return StackPane(label)
     }
 }
