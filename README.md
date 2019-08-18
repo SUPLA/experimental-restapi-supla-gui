@@ -43,7 +43,7 @@ Goto to [releases](https://github.com/SUPLA/experimental-jSuplaGUI/releases) tab
 
 Download `Suppla-X.Y.Z.pkg` and double click it. Then just move `Supla GUI` to `Applications`. 
 
-![Install MacOS](doc/macos-install.png "Install MacOS")
+<img src="doc/macos-install.png" width="400">
 
 ## Native
  
