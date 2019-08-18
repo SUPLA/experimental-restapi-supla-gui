@@ -147,6 +147,7 @@ class JSuplaGuiController @Inject constructor(
             logger.error("Error while updating devices", e)
         } finally {
             updateDeviceLock.set(false)
+            model.devices.forEach { it.updating.value = false }
         }
     }
 
