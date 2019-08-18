@@ -70,6 +70,8 @@ jfx {
 	jfxMainAppJarName = jar.archiveName
 	appName = project.name
 	vendor = 'Supla Team'
+	identifier = group
+	nativeReleaseVersion = version
 }
 
 repositories {
