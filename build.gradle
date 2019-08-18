@@ -89,7 +89,7 @@ dependencies {
 	compile "org.codehaus.griffon:griffon-guice:${griffonVersion}"
 	compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
 	compile 'com.jfoenix:jfoenix:8.0.8'
-	compile 'pl.grzeslowski.jsupla.api:jsupla-api:3.5.2'
+	compile 'pl.grzeslowski.jsupla.api:jsupla-api:3.5.3'
 	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
 	// FontAwesome
