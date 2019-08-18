@@ -20,6 +20,7 @@
 <?import com.jfoenix.controls.JFXMasonryPane?>
 <?import com.jfoenix.controls.JFXScrollPane?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <BorderPane prefHeight="1000.0" prefWidth="800.0"
@@ -32,20 +33,23 @@
 	</center>
 
 	<bottom>
-		<HBox alignment="BASELINE_RIGHT">
-			<HBox>
+		<HBox alignment="BASELINE_RIGHT" spacing="3.0">
+			<HBox spacing="3.0">
 				<Label fx:id="addressLabel" text="%jSuplaGui.address"/>
 				<Label fx:id="addressValueLabel" text="N/A"/>
 			</HBox>
-			<HBox>
+			<Separator orientation="VERTICAL" HBox.hgrow="ALWAYS"/>
+			<HBox spacing="3.0">
 				<Label fx:id="cloudVersionLabel" text="%jSuplaGui.cloudVersion"/>
 				<Label fx:id="cloudVersionValueLabel" text="N/A"/>
 			</HBox>
-			<HBox>
+			<Separator orientation="VERTICAL" HBox.hgrow="ALWAYS"/>
+			<HBox spacing="3.0">
 				<Label fx:id="apiVersionLabel" text="%jSuplaGui.apiVersion"/>
 				<Label fx:id="apiVersionValueLabel" text="N/A"/>
 			</HBox>
-			<HBox>
+			<Separator orientation="VERTICAL" HBox.hgrow="ALWAYS"/>
+			<HBox spacing="3.0">
 				<Label fx:id="supportedApiVersionsLabel" text="%jSuplaGui.supportedApiVersions"/>
 				<Label fx:id="supportedApiVersionsValueLabel" text="N/A"/>
 			</HBox>
