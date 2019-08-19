@@ -26,4 +26,9 @@ object PreferencesKeys {
      * Set how many thresds should be in thread pool. Default 3
      */
     const val threadScheduleThreadPoolSize = "thread.schedule_thread_pool_size"
+
+    /**
+     *
+     */
+    const val omitHttps = "dangerous.omit_https"
 }

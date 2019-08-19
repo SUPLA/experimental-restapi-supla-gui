@@ -89,7 +89,7 @@ dependencies {
 	compile "org.codehaus.griffon:griffon-guice:${griffonVersion}"
 	compile "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
 	compile 'com.jfoenix:jfoenix:8.0.8'
-	compile 'pl.grzeslowski.jsupla.api:jsupla-api:3.5.3'
+	compile "pl.grzeslowski.jsupla.api:jsupla-api:$jSuplaApiVersion"
 	compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
 	// FontAwesome
@@ -101,6 +101,7 @@ dependencies {
 	testCompile "org.codehaus.groovy:groovy-all:${groovyVersion}"
 	testCompile "org.spockframework:spock-core:${spockVersion}"
 	testCompile group: 'org.mockito', name: 'mockito-core', version: '1.10.19'
+	testCompile group: 'org.assertj', name: 'assertj-core', version: '3.13.2'
 
 	functionalTestCompile "org.codehaus.griffon:griffon-javafx-test:${griffonVersion}"
 }
