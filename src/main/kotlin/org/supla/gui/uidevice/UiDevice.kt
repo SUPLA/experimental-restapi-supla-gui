@@ -24,6 +24,7 @@ class UiDevice(private val nativeDevice: Device) : Comparable<UiDevice> {
     val comment = SimpleStringProperty(nativeDevice.comment)
     val channels: List<UiChannel> = nativeDevice.channels
             .stream()
+            .filter { channel -> channel.isConnected }
             .map { channel -> UiChannel(channel) }
             .collect(Collectors.toList())
     val updating = SimpleBooleanProperty()

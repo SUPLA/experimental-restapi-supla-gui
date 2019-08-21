@@ -25,12 +25,14 @@ import javax.inject.Inject
 
 internal class ViewBuilderImpl @Inject constructor(
         private val internationalizationService: InternationalizationService,
+        emptyDeviceViewBuilder: EmptyDeviceViewBuilder,
         gateDeviceViewBuilder: GateDeviceViewBuilder,
         lightDeviceViewBuilder: LightDeviceViewBuilder,
         temperatureAndHumidityDeviceViewBuilder: TemperatureAndHumidityDeviceViewBuilder,
         rgbDeviceViewBuilder: RgbDeviceViewBuilder,
         rollerShutterDeviceViewBuilder: RollerShutterDeviceViewBuilder) : ViewBuilder {
     private val builders: List<DeviceViewBuilder> = listOf(
+            emptyDeviceViewBuilder,
             gateDeviceViewBuilder,
             lightDeviceViewBuilder,
             temperatureAndHumidityDeviceViewBuilder,
