@@ -33,6 +33,6 @@ class UiDevice(private val nativeDevice: Device) : Comparable<UiDevice> {
     override fun compareTo(other: UiDevice): Int = nativeDevice.compareTo(other.nativeDevice)
 
     override fun toString(): String {
-        return "UiDevice(id=$id, name=${name.value}, comment=${comment.value})"
+        return "UiDevice(id=$id, name=${name.value}, comment=${comment.value}, nativeDevice=$nativeDevice)"
     }
 }
