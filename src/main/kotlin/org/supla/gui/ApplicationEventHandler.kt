@@ -55,7 +55,6 @@ class ApplicationEventHandler @Inject constructor(
         val debugMode = preferencesService.readBoolWithDefault(PreferencesKeys.debugMode, false)
         if (debugMode) {
             logger.info("Setting debug mode to `true`")
-            val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
             setLevel(Logger.ROOT_LOGGER_NAME, Level.DEBUG)
             setLevel("org.supla.gui", Level.TRACE)
             setLevel("pl.grzeslowski", Level.TRACE)
