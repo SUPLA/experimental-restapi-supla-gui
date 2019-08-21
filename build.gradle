@@ -9,6 +9,7 @@ buildscript {
 		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
 		classpath 'org.gradle.api.plugins:gradle-izpack-plugin:0.2.3'
 		classpath 'com.github.cr0:gradle-macappbundle-plugin:3.1.0'
+		classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
 		classpath 'org.kordamp.gradle:stats-gradle-plugin:0.2.2'
 		classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
 		classpath 'de.gliderpilot.gradle.jnlp:gradle-jnlp-plugin:1.2.5'
@@ -222,6 +223,35 @@ task jacocoRootReport(dependsOn: jacocoRootMerge, type: JacocoReport) {
 		xml.destination = file("${buildDir}/reports/jacoco/root/root.xml")
 	}
 }
+
+task fatJar(type: Jar) {
+	manifest {
+		attributes 'Main-Class': 'org.supla.gui.LauncherKt'
+	}
+	baseName = 'all-in-one-jar'
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+}
+tasks.fatJar.dependsOn "jar"
+
+apply plugin: 'com.github.johnrengelman.shadow'
+import com.github.jengelman.gradle.plugins.shadow.transformers.*
+import java.text.SimpleDateFormat
+shadowJar {
+	transform(ServiceFileTransformer)
+	transform(ServiceFileTransformer) {
+		path = 'META-INF/griffon'
+	}
+	transform(ServiceFileTransformer) {
+		path = 'META-INF/types'
+	}
+	transform(PropertiesFileTransformer) {
+		paths = [
+				'META-INF/editors/java.beans.PropertyEditor'
+		]
+	}
+}
+tasks.build.dependsOn "shadowJar"
 
 allOpen {
 	//noinspection GrUnresolvedAccess
