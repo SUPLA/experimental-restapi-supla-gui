@@ -13,17 +13,58 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 package org.supla.gui
 
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.LoggerContext
+import griffon.core.GriffonApplication
 import griffon.core.event.EventHandler
-import griffon.exceptions.GriffonViewInitializationException
 import javafx.application.Platform
 import org.slf4j.LoggerFactory
+import org.supla.gui.preferences.PreferencesKeys
+import org.supla.gui.preferences.PreferencesService
+import javax.inject.Inject
 
-class ApplicationEventHandler : EventHandler {
+
+class ApplicationEventHandler @Inject constructor(
+        application: GriffonApplication,
+        private val preferencesService: PreferencesService) : EventHandler {
     private val logger = LoggerFactory.getLogger(ApplicationEventHandler::class.java)
 
-    @Suppress("unused")
-    fun onUncaughtGriffonViewInitializationException(ex: GriffonViewInitializationException) {
-        logger.error("Error", ex)
+    init {
+        val debugMode = preferencesService.readBoolWithDefault(PreferencesKeys.debugMode, false)
+        logger.info("debug mode = $debugMode")
+        application.eventRouter.addEventListener("BootstrapEnd") { onBootstrapEnd() }
+        application.eventRouter.addEventListener("UncaughtGriffonViewInitializationException") { args -> onUncaughtGriffonViewInitializationException(args) }
+    }
+
+
+    private fun onUncaughtGriffonViewInitializationException(args: Array<Any>) {
+        if (args.isNotEmpty()) {
+            val first = args[0]
+            if (first is Exception) {
+                logger.error("Error", first)
+            } else {
+                logger.error("Error: {}", args[0])
+            }
+        }
         Platform.exit()
+    }
+
+    private fun onBootstrapEnd() {
+        logger.debug("onBootstrapEnd")
+        val debugMode = preferencesService.readBoolWithDefault(PreferencesKeys.debugMode, false)
+        if (debugMode) {
+            logger.info("Setting debug mode to `true`")
+            val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
+            setLevel(Logger.ROOT_LOGGER_NAME, Level.DEBUG)
+            setLevel("org.supla.gui", Level.TRACE)
+            setLevel("pl.grzeslowski", Level.TRACE)
+        }
+    }
+
+    private fun setLevel(logger: String, level: Level) {
+        val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
+        val rootLogger = loggerContext.getLogger(logger)
+        (rootLogger as Logger).level = level
     }
 }

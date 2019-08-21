@@ -31,4 +31,9 @@ object PreferencesKeys {
      *
      */
     const val omitHttps = "dangerous.omit_https"
+
+    /**
+     * Sets the debug mode. Default false
+     */
+    const val debugMode = "debug_mode"
 }
