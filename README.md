@@ -47,11 +47,10 @@ Download `Suppla-X.Y.Z.pkg` and double click it. Then follow the installer.
 
 ## Native
  
- Download zip filed called `Supla-X.Y.Z.jar`, open terminal and type:
- 
- ```shell script
-java -jar Supla-X.Y.Z-all.jar
-```
+Download zip filed called `Supla-X.Y.Z-native.zip`, unzip it and depending on you system run:
+
+ - Windows family: `Supla.bat`
+ - *Unix family (+ MacOs): `Supla` (`sh` file) 
 
 _Info: This solution requires Java Runtime Environment in at least 8 version_ 
 

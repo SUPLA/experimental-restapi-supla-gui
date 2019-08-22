@@ -226,3 +226,26 @@ allOpen {
 	//noinspection GrUnresolvedAccess
 	annotation("griffon.metadata.ArtifactProviderFor")
 }
+
+task createStartScripts(type: CreateStartScripts) {
+	outputDir = file("$buildDir/native")
+	mainClassName = 'org.supla.gui.LauncherKt'
+	applicationName = project.name
+	classpath = files(jar.archiveFileName)
+}
+
+task copyFatJar(type: Copy, dependsOn: 'jar') {
+	from "$buildDir/libs", {
+		include "${project.name}*.jar"
+	}
+	into createStartScripts.outputDir.path + "/lib"
+}
+
+task bundleNativeApp(type: Zip, dependsOn: ['createStartScripts', 'copyFatJar']) {
+	destinationDirectory = file("$buildDir")
+	from tasks.createStartScripts.outputDir.path
+	archiveBaseName.set(project.name)
+	archiveClassifier.set('native')
+	fileMode 777
+}
+tasks.build.dependsOn 'bundleNativeApp'
