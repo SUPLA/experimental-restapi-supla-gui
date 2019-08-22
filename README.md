@@ -50,7 +50,7 @@ Download `Suppla-X.Y.Z.pkg` and double click it. Then follow the installer.
  Download zip filed called `Supla-X.Y.Z.jar`, open terminal and type:
  
  ```shell script
-java -jar Supla-native-X.Y.Z.jar
+java -jar Supla-X.Y.Z-all.jar
 ```
 
 _Info: This solution requires Java Runtime Environment in at least 8 version_ 
@@ -82,7 +82,7 @@ First login to your [Supla Cloud](https://cloud.supla.org/), click `Integrations
 # Configuration
 
 File `user_home/.supla/preferences.properties` contains properties for Supla GUI. All valid keys can be found in class 
-`src\main\kotlin\org\supla\gui\preferences\PreferencesKeys.kt`.
+`src/main/kotlin/org/supla/gui/preferences/PreferencesKeys.kt`.
 
 Example of `preferences.properties`:
 
@@ -105,6 +105,12 @@ Supported things:
 
 Not supported things:
 * Meters
+
+# Issues / Bugs / Ideas
+
+Fell free to create any [issue](https://github.com/SUPLA/experimental-restapi-supla-gui/issues) on our tracker. 
+If you can please attached full logs. To do this turn off _Supla GUI_, go to folder `user_home/.supla`, remove `logs` directory
+and add in `preferences.properties` this line: `debug_mode=true`. After this application will start to log in debug mode.
 
 # Copyright
 
