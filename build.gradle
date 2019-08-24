@@ -46,6 +46,9 @@ ext {
 			'**/*.xml',
 			'**/*.txt'
 	]
+	releaseFolder = "$buildDir/releaseApp"
+	//noinspection GroovyAccessibility
+	operatingSystem = "$Os.OS_NAME (ver=$Os.OS_VERSION, arch=$Os.OS_ARCH)"
 }
 
 mainClassName = 'org.supla.gui.LauncherKt'
@@ -226,19 +229,10 @@ task jacocoRootReport(dependsOn: jacocoRootMerge, type: JacocoReport) {
 	}
 }
 
-task fatJar(type: Jar) {
-	manifest {
-		attributes 'Main-Class': 'org.supla.gui.LauncherKt'
-	}
-	baseName = 'all-in-one-jar'
-	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-	with jar
-}
-tasks.fatJar.dependsOn "jar"
-
 apply plugin: 'com.github.johnrengelman.shadow'
 import com.github.jengelman.gradle.plugins.shadow.transformers.*
 import java.text.SimpleDateFormat
+
 shadowJar {
 	transform(ServiceFileTransformer)
 	transform(ServiceFileTransformer) {
@@ -254,6 +248,7 @@ shadowJar {
 	}
 }
 tasks.build.dependsOn "shadowJar"
+tasks.shadowJar.dependsOn "jar"
 
 allOpen {
 	//noinspection GrUnresolvedAccess
@@ -267,18 +262,48 @@ task createStartScripts(type: CreateStartScripts) {
 	classpath = files(jar.archiveFileName)
 }
 
-task copyFatJar(type: Copy, dependsOn: 'jar') {
+task copyFatJar(type: Copy, dependsOn: 'shadowJar') {
 	from "$buildDir/libs", {
 		include "${project.name}*.jar"
 	}
 	into createStartScripts.outputDir.path + "/lib"
 }
 
-task bundleNativeApp(type: Zip, dependsOn: ['createStartScripts', 'copyFatJar']) {
-	destinationDirectory = file("$buildDir")
+task bundleNativeApp(type: Zip, dependsOn: ['createBuildProperties', 'createStartScripts', 'copyFatJar']) {
+	destinationDirectory = file("$releaseFolder")
 	from tasks.createStartScripts.outputDir.path
 	archiveBaseName.set(project.name)
-	archiveClassifier.set('native')
+	archiveClassifier.set('native-jre8')
 	fileMode 777
 }
 tasks.build.dependsOn 'bundleNativeApp'
+
+task createBuildProperties(type: WriteProperties) {
+	comment = "Supla GUI"
+	outputFile = file("$releaseFolder/build.properties")
+	property "os", operatingSystem
+	property "build_date", buildDate
+	property "build_time", buildTime
+	property "version", version
+}
+
+task prepareRelease(dependsOn: ['build', 'bundleNativeApp', 'jfxNative']) {
+	doLast {
+		println("Release for `${operatingSystem}`, version ${version} prepared!")
+	}
+}
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+	task bundleJfxNativeForWindows(type: Zip, dependsOn: 'jfxNative') {
+		destinationDirectory = file("$releaseFolder")
+		from "$buildDir/jfx/native/${project.name}"
+		from releaseFolder, {
+			include '**/*.properties'
+		}
+		archiveBaseName.set(project.name)
+		archiveClassifier.set('windows')
+	}
+	tasks.prepareRelease.dependsOn 'bundleJfxNativeForWindows'
+}
