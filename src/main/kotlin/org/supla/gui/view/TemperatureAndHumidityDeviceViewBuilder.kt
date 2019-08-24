@@ -26,6 +26,7 @@ import org.supla.gui.i18n.InternationalizationService
 import org.supla.gui.uidevice.*
 import pl.grzeslowski.jsupla.api.channel.state.Percentage
 import java.math.BigDecimal
+import java.math.BigDecimal.ROUND_CEILING
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
@@ -92,7 +93,7 @@ class TemperatureAndHumidityDeviceViewBuilder @Inject constructor(private val in
         val label = Label(internationalizationService.findMessage("jSuplaGui.tile.temperature"))
         val value = Label()
         value.textProperty().bind(
-                Bindings.createDoubleBinding(Callable { temperature.value.toDouble() }, temperature)
+                Bindings.createDoubleBinding(Callable { roundUp(temperature.value).toDouble() }, temperature)
                         .asString()
                         .concat(" °C")
         )
@@ -104,11 +105,13 @@ class TemperatureAndHumidityDeviceViewBuilder @Inject constructor(private val in
         val label = Label(internationalizationService.findMessage("jSuplaGui.tile.humidity"))
         val value = Label()
         value.textProperty().bind(
-                Bindings.createDoubleBinding(Callable { humidity.value.percentage.toDouble() }, humidity)
+                Bindings.createDoubleBinding(Callable { roundUp(humidity.value.percentage).toDouble() }, humidity)
                         .asString()
                         .concat("%")
         )
         addDirtyLabelListener(updating, value)
         addRow(left, right, label, value)
     }
+
+    private fun roundUp(value: BigDecimal) = value.setScale(2, ROUND_CEILING)
 }

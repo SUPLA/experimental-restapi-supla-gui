@@ -25,6 +25,7 @@ internal class ViewBuilderModule : AbstractModule() {
     override fun doConfigure() {
         bind(ViewBuilder::class.java).to(ViewBuilderImpl::class.java).asSingleton()
 
+        bind(EmptyDeviceViewBuilder::class.java).to(EmptyDeviceViewBuilder::class.java)
         bind(GateDeviceViewBuilder::class.java).to(GateDeviceViewBuilder::class.java)
         bind(LightDeviceViewBuilder::class.java).to(LightDeviceViewBuilder::class.java)
         bind(RgbDeviceViewBuilder::class.java).to(RgbDeviceViewBuilder::class.java)

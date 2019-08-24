@@ -126,7 +126,9 @@ class JSuplaGuiController @Inject constructor(
                                             uiChannel.caption.value = channel.caption
                                             uiChannel.connected.value = channel.isConnected
                                             uiChannel.state.updateByApi {
-                                                updateState(uiChannel.state, channel.state)
+                                                if (channel.findState().isPresent) {
+                                                    updateState(uiChannel.state, channel.findState().get())
+                                                }
                                             }
                                         }
                                         break

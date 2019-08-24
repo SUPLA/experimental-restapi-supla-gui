@@ -21,7 +21,11 @@ class UiChannel(val nativeChannel: Channel) : Comparable<UiChannel> {
     val id = nativeChannel.id
     val caption = SimpleStringProperty(nativeChannel.caption)
     val connected = SimpleBooleanProperty(nativeChannel.isConnected)
-    val state: UiState = buildUiState(nativeChannel.state)
+    val state: UiState = if (nativeChannel.findState().isPresent) {
+        buildUiState(nativeChannel.findState().get())
+    } else {
+        UndefinedState
+    }
 
     override fun compareTo(other: UiChannel): Int = nativeChannel.compareTo(other.nativeChannel)
 
