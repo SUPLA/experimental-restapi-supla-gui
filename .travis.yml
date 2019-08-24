@@ -1,0 +1,11 @@
+language: java
+sudo: true
+services:
+  - xvfb
+before_install:
+  - sudo apt update
+  - sudo apt install openjfx
+  - export DISPLAY=:99.0
+install: true
+script: ./gradlew clean build
+jdk: openjdk8
