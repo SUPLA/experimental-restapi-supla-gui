@@ -42,14 +42,19 @@ internal class ViewBuilderImpl @Inject constructor(
             rollerShutterDeviceViewBuilder)
 
     override fun buildViewForDevice(device: UiDevice): Node {
+        val commentIsPresent = device.comment.value != null && device.comment.value.isNotBlank()
         val deviceName = Label()
         deviceName.textProperty().bind(device.name)
         deviceName.isWrapText = true
-        deviceName.styleClass.addAll("title")
-        val deviceComment: Label? = if (device.comment.value != null && device.comment.value.isNotBlank()) {
+        if (commentIsPresent) {
+            deviceName.styleClass.addAll("sub-title")
+        } else {
+            deviceName.styleClass.addAll("title")
+        }
+        val deviceComment: Label? = if (commentIsPresent) {
             val comment = Label()
             comment.textProperty().bind(device.comment)
-            comment.styleClass.addAll("sub-title")
+            comment.styleClass.addAll("title")
             comment.isWrapText = true
             comment
         } else {
@@ -67,11 +72,11 @@ internal class ViewBuilderImpl @Inject constructor(
 
         val header = VBox(9.0)
         header.styleClass.addAll("header")
-        header.children.addAll(deviceName)
         if (deviceComment != null) {
             header.children.add(deviceComment)
             VBox.setVgrow(deviceComment, Priority.ALWAYS)
         }
+        header.children.addAll(deviceName)
         VBox.setVgrow(deviceName, Priority.ALWAYS)
         VBox.setVgrow(spinner, Priority.ALWAYS)
         header.children.addAll(spinner)
