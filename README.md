@@ -7,6 +7,8 @@
 
 <div align="center">
 
+[![Build Status](https://travis-ci.org/SUPLA/experimental-restapi-supla-gui.svg?branch=master)](https://travis-ci.org/SUPLA/experimental-restapi-supla-gui)
+
 </div>
 
 ***

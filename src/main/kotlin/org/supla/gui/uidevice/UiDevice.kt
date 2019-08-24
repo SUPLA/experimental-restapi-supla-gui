@@ -24,6 +24,8 @@ class UiDevice(private val nativeDevice: Device) : Comparable<UiDevice> {
     val comment = SimpleStringProperty(nativeDevice.comment)
     val channels: List<UiChannel> = nativeDevice.channels
             .stream()
+            .filter { channel -> channel.isConnected }
+            .filter { channel -> channel.findState().isPresent }
             .map { channel -> UiChannel(channel) }
             .collect(Collectors.toList())
     val updating = SimpleBooleanProperty()
@@ -31,6 +33,6 @@ class UiDevice(private val nativeDevice: Device) : Comparable<UiDevice> {
     override fun compareTo(other: UiDevice): Int = nativeDevice.compareTo(other.nativeDevice)
 
     override fun toString(): String {
-        return "UiDevice(id=$id, name=${name.value}, comment=${comment.value})"
+        return "UiDevice(id=$id, name=${name.value}, comment=${comment.value}, nativeDevice=$nativeDevice)"
     }
 }

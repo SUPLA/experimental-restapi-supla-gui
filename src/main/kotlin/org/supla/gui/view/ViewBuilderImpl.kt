@@ -19,18 +19,22 @@ import javafx.scene.control.Label
 import javafx.scene.layout.Priority
 import javafx.scene.layout.StackPane
 import javafx.scene.layout.VBox
+import org.slf4j.LoggerFactory
 import org.supla.gui.i18n.InternationalizationService
 import org.supla.gui.uidevice.UiDevice
 import javax.inject.Inject
 
 internal class ViewBuilderImpl @Inject constructor(
         private val internationalizationService: InternationalizationService,
+        emptyDeviceViewBuilder: EmptyDeviceViewBuilder,
         gateDeviceViewBuilder: GateDeviceViewBuilder,
         lightDeviceViewBuilder: LightDeviceViewBuilder,
         temperatureAndHumidityDeviceViewBuilder: TemperatureAndHumidityDeviceViewBuilder,
         rgbDeviceViewBuilder: RgbDeviceViewBuilder,
         rollerShutterDeviceViewBuilder: RollerShutterDeviceViewBuilder) : ViewBuilder {
+    private val logger = LoggerFactory.getLogger(ViewBuilderImpl::class.java)
     private val builders: List<DeviceViewBuilder> = listOf(
+            emptyDeviceViewBuilder,
             gateDeviceViewBuilder,
             lightDeviceViewBuilder,
             temperatureAndHumidityDeviceViewBuilder,
@@ -38,14 +42,19 @@ internal class ViewBuilderImpl @Inject constructor(
             rollerShutterDeviceViewBuilder)
 
     override fun buildViewForDevice(device: UiDevice): Node {
+        val commentIsPresent = device.comment.value != null && device.comment.value.isNotBlank()
         val deviceName = Label()
         deviceName.textProperty().bind(device.name)
         deviceName.isWrapText = true
-        deviceName.styleClass.addAll("title")
-        val deviceComment: Label? = if (device.comment.value != null && device.comment.value.isNotBlank()) {
+        if (commentIsPresent) {
+            deviceName.styleClass.addAll("sub-title")
+        } else {
+            deviceName.styleClass.addAll("title")
+        }
+        val deviceComment: Label? = if (commentIsPresent) {
             val comment = Label()
             comment.textProperty().bind(device.comment)
-            comment.styleClass.addAll("sub-title")
+            comment.styleClass.addAll("title")
             comment.isWrapText = true
             comment
         } else {
@@ -63,11 +72,11 @@ internal class ViewBuilderImpl @Inject constructor(
 
         val header = VBox(9.0)
         header.styleClass.addAll("header")
-        header.children.addAll(deviceName)
         if (deviceComment != null) {
             header.children.add(deviceComment)
             VBox.setVgrow(deviceComment, Priority.ALWAYS)
         }
+        header.children.addAll(deviceName)
         VBox.setVgrow(deviceName, Priority.ALWAYS)
         VBox.setVgrow(spinner, Priority.ALWAYS)
         header.children.addAll(spinner)
@@ -77,7 +86,10 @@ internal class ViewBuilderImpl @Inject constructor(
                 .map { it.build(device, node) }
                 .filter { it != null }
                 .findAny()
-                .orElseGet { buildUnknownLabel(node) }!!
+                .orElseGet {
+                    logger.warn("This device was unknown: {}", device)
+                    buildUnknownLabel(node)
+                }!!
         body.maxWidth(Double.MAX_VALUE)
         VBox.setVgrow(body, Priority.ALWAYS)
         body.styleClass.addAll("body")
