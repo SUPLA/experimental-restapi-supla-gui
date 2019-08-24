@@ -1,0 +1,10 @@
+language: java
+sudo: false
+script: ./gradlew clean build
+matrix:
+  include:
+    - jdk: oraclejdk8
+    - jdk: oraclejdk9
+    - jdk: openjdk10
+    - jdk: openjdk11
+dist: trusty
